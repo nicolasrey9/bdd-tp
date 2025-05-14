@@ -21,3 +21,24 @@ CREATE TABLE sucursal(
     suc_telefono NVARCHAR(255),
     suc_ubicacion BIGINT)
 
+CREATE TABLE pedido(
+    ped_numero DECIMAL(18,0) NOT NULL,
+    ped_fecha DATETIME2(6),
+    ped_estado NVARCHAR(255),
+    ped_total DECIMAL(18,2), --! creo que esta mal
+    ped_sucursal BIGINT,
+    ped_cliente BIGINT
+)
+
+CREATE TABLE cancelacion(
+    canc_pedido DECIMAL(18,0) NOT NULL,
+    canc_fecha DATETIME2(6),
+    canc_motivo VARCHAR(255)
+)
+
+CREATE TABLE detalle_pedido(
+    det_pedido DECIMAL(18,0) NOT NULL,
+    det_sillon BIGINT NOT NULL,
+    det_cantidad BIGINT,
+    det_linea BIGINT
+)
