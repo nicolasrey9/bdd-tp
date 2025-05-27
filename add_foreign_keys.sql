@@ -47,7 +47,7 @@ REFERENCES pedido(ped_numero)
 ALTER TABLE detalle_pedido    
 ADD CONSTRAINT FK_DetallePedido_Sillon 
 FOREIGN KEY (det_sillon) 
-REFERENCES sillon(sill_id)
+REFERENCES sillon(sill_codigo)
 
 ALTER TABLE proveedor
 ADD CONSTRAINT FK_Proveedor_Direccion 
@@ -128,3 +128,18 @@ ALTER TABLE material
 ADD CONSTRAINT FK_Material
 FOREIGN KEY (mat_tipo)
 REFERENCES tipo_material(tipo_id)
+
+ALTER TABLE tela
+ADD CONSTRAINT FK_Tela
+FOREIGN KEY (tela_material)
+REFERENCES material(mat_id)
+
+ALTER TABLE relleno
+ADD CONSTRAINT FK_Relleno
+FOREIGN KEY relleno_material
+REFERENCES material(mat_id)
+
+ALTER TABLE madera
+ADD CONSTRAINT FK_Madera
+FOREIGN KEY madera_material
+REFERENCES material(mat_id)
