@@ -1,3 +1,7 @@
+/*
+    23 ENTIDADES
+*/
+
 CREATE TABLE cliente(
     clie_id BIGINT NOT NULL,
     clie_dni BIGINT NOT NULL,
@@ -6,7 +10,8 @@ CREATE TABLE cliente(
     clie_mail NVARCHAR(255),
     clie_telefono NVARCHAR(255),
     cle_fecha_nac DATETIME2(6),
-    clie_ubicacion BIGINT )
+    clie_ubicacion BIGINT
+)
 
 
 CREATE TABLE direccion(
@@ -30,7 +35,8 @@ CREATE TABLE sucursal(
     suc_numero BIGINT NOT NULL,
     suc_mail NVARCHAR(255),
     suc_telefono NVARCHAR(255),
-    suc_direccion BIGINT)
+    suc_direccion BIGINT
+)
 
 CREATE TABLE pedido(
     ped_numero DECIMAL(18,0) NOT NULL,
@@ -41,17 +47,17 @@ CREATE TABLE pedido(
     ped_cliente BIGINT
 )
 
-CREATE TABLE cancelacion(
-    canc_pedido DECIMAL(18,0) NOT NULL,
-    canc_fecha DATETIME2(6),
-    canc_motivo VARCHAR(255)
-)
-
 CREATE TABLE detalle_pedido(
     det_pedido DECIMAL(18,0) NOT NULL,
     det_sillon BIGINT NOT NULL,
     det_cantidad BIGINT,
     det_linea BIGINT
+)
+
+CREATE TABLE cancelacion(
+    canc_pedido DECIMAL(18,0) NOT NULL,
+    canc_fecha DATETIME2(6),
+    canc_motivo VARCHAR(255)
 )
 
 CREATE TABLE proveedor(
@@ -70,11 +76,27 @@ CREATE TABLE compra(
     comp_proveedor NVARCHAR(255)
 )
 
+CREATE TABLE detalle_compra(
+    det_compra DECIMAL(18,0) NOT NULL,
+    det_material BIGINT NOT NULL,
+    det_precio_unitario DECIMAL(18,2),
+    det_cantidad DECIMAL(18,0)
+)
+
 CREATE TABLE factura(
     fact_numero BIGINT NOT NULL,
     fact_fecha DATETIME2(6),
     fact_cliente BIGINT,
     fact_sucursal BIGINT
+)
+
+CREATE TABLE detalle_factura(
+    det_factura BIGINT NOT NULL,
+    det_sillon BIGINT NOT NULL,
+    det_pedido DECIMAL(18,0) NOT NULL,
+    det_precio_unitario DECIMAL(18,2),
+    det_linea BIGINT,
+    det_cantidad BIGINT
 )
 
 CREATE TABLE envio(
@@ -86,47 +108,27 @@ CREATE TABLE envio(
     env_factura BIGINT
 )
 
-CREATE TABLE detalle_compra(
-    det_compra DECIMAL(18,0),
-    det_material BIGINT,
-    det_precio_unitario DECIMAL(18,2),
-    det_cantidad DECIMAL(18,0)
-)
 
 CREATE TABLE modelo(
-    mod_codigo BIGINT,
+    mod_codigo BIGINT NOT NULL,
     mod_modelo NVARCHAR(255),
     mod_descripcion NVARCHAR(255),
     mod_precio_base DECIMAL(18,2)
 )
 
-CREATE TABLE detalle_factura(
-    det_factura BIGINT,
-    det_sillon BIGINT,
-    det_precio_unitario DECIMAL(18,2),
-    det_pedido DECIMAL(18,0),
-    det_linea BIGINT,
-    det_cantidad BIGINT
-)
-
-CREATE TABLE detalle_pedido(
-    det_pedido DECIMAL(18,0),
-    det_sillon BIGINT,
-    det_cantidad BIGINT,
-    det_linea BIGINT
-)
 
 CREATE TABLE sillon(
-    sill_codigo BIGINT,
+    sill_codigo BIGINT NOT NULL,
+    sill_modelo BIGINT,
     sill_medida_alto DECIMAL(18,2),
     sill_medida_ancho DECIMAL(18,2),
     sill_medida_profundidad DECIMAL(18,2)
 )
 
 CREATE TABLE medida(
-    med_alto DECIMAL(18,2),
-    med_ancho DECIMAL(18,2),
-    med_profundidad DECIMAL(18,2),
+    med_alto DECIMAL(18,2) NOT NULL,
+    med_ancho DECIMAL(18,2) NOT NULL,
+    med_profundidad DECIMAL(18,2) NOT NULL,
     med_precio DECIMAL(18,2)
 )
 
@@ -136,7 +138,7 @@ CREATE TABLE material_por_sillon(
 )
 
 CREATE TABLE material(
-    mat_id BIGINT,
+    mat_id BIGINT NOT NULL,
     mat_nombre NVARCHAR(255),
     mat_descripcion NVARCHAR(255),
     mat_precio DECIMAL(38,2),
@@ -164,6 +166,3 @@ CREATE TABLE tela(
     mad_color NVARCHAR(255),
     mad_dureza NVARCHAR(255)
 )
-
-
-
