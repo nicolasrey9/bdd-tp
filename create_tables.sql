@@ -10,7 +10,7 @@ CREATE TABLE cliente(
     clie_mail NVARCHAR(255),
     clie_telefono NVARCHAR(255),
     cle_fecha_nac DATETIME2(6),
-    clie_ubicacion BIGINT
+    clie_direccion BIGINT
 )
 
 
@@ -27,8 +27,8 @@ CREATE TABLE localidad(
 )
 
 CREATE TABLE provincia(
-    local_id BIGINT NOT NULL,
-    local_nombre NVARCHAR(255) NOT NULL
+    prov_id BIGINT NOT NULL,
+    prov_nombre NVARCHAR(255) NOT NULL
 )
 
 CREATE TABLE sucursal(
@@ -161,7 +161,7 @@ CREATE TABLE relleno(
     rell_densidad DECIMAL(38,2)
 )
 
-CREATE TABLE tela(
+CREATE TABLE madera(
     mad_material BIGINT NOT NULL,
     mad_color NVARCHAR(255),
     mad_dureza NVARCHAR(255)

@@ -136,10 +136,10 @@ REFERENCES material(mat_id)
 
 ALTER TABLE relleno
 ADD CONSTRAINT FK_Relleno
-FOREIGN KEY relleno_material
+FOREIGN KEY (relleno_material)
 REFERENCES material(mat_id)
 
 ALTER TABLE madera
 ADD CONSTRAINT FK_Madera
-FOREIGN KEY madera_material
+FOREIGN KEY (madera_material)
 REFERENCES material(mat_id)
