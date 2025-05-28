@@ -1,3 +1,6 @@
+USE GD1C2025;
+GO
+
 -- 1. Primero creamos el esquema BASADOS si no existe
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'BASADOS')
 BEGIN
@@ -32,6 +35,9 @@ GO
 
 
 
-PRINT '=== PROCESO COMPLETADO ==='
+PRINT '=== PROCESO DE CREACION COMPLETADO ==='
 PRINT 'Todos los objetos fueron creados en el esquema BASADOS'
 GO
+
+
+

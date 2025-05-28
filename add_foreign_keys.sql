@@ -96,8 +96,9 @@ REFERENCES BASADOS.factura(fact_numero)
 
 ALTER TABLE BASADOS.detalle_factura
 ADD CONSTRAINT FK_Detalle_Factura_Detalle_Pedido
-FOREIGN KEY (det_sillon)
-REFERENCES BASADOS.detalle_pedido(det_sillon)
+FOREIGN KEY (det_pedido, det_sillon)
+REFERENCES BASADOS.detalle_pedido(det_pedido, det_sillon)
+
 
 ALTER TABLE BASADOS.sillon
 ADD CONSTRAINT FK_Sillon_Medida
