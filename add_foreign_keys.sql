@@ -40,106 +40,96 @@ FOREIGN KEY (canc_pedido)
 REFERENCES BASADOS.pedido(ped_numero)
 
 ALTER TABLE BASADOS.detalle_pedido
-ADD CONSTRAINT FK_DetallePedido_Pedido 
+ADD CONSTRAINT FK_Detalle_Pedido_Pedido 
 FOREIGN KEY (det_pedido) 
 REFERENCES BASADOS.pedido(ped_numero)
 
-ALTER TABLE BASADOS.etalle_pedido    
-ADD CONSTRAINT FK_DetallePedido_Sillon 
+ALTER TABLE BASADOS.detalle_pedido    
+ADD CONSTRAINT FK_Detalle_Pedido_Sillon 
 FOREIGN KEY (det_sillon) 
 REFERENCES BASADOS.sillon(sill_codigo)
 
-ALTER TABLE proveedor
+ALTER TABLE BASADOS.proveedor
 ADD CONSTRAINT FK_Proveedor_Direccion 
 FOREIGN KEY (prov_direccion)
 REFERENCES BASADOS.direccion(direc_id)
 
-ALTER TABLE compra
+ALTER TABLE BASADOS.compra
 ADD CONSTRAINT FK_Compra_Sucursal 
 FOREIGN KEY (comp_sucursal)
 REFERENCES BASADOS.sucursal(suc_numero)
 
-ALTER TABLE compra
+ALTER TABLE BASADOS.compra
 ADD CONSTRAINT FK_Compra_Proveedor 
 FOREIGN KEY (comp_proveedor)
-REFERENCES BASADOS.provedor(prov_cuit)
+REFERENCES BASADOS.proveedor(prov_cuit)
 
-ALTER TABLE factura
+ALTER TABLE BASADOS.factura
 ADD CONSTRAINT FK_Factura_Cliente 
 FOREIGN KEY (fact_cliente) 
 REFERENCES BASADOS.cliente(clie_id)
 
-ALTER TABLE factura        
+ALTER TABLE BASADOS.factura        
 ADD CONSTRAINT FK_Factura_Sucursal 
 FOREIGN KEY (fact_sucursal)
 REFERENCES BASADOS.sucursal(suc_numero)
 
-ALTER TABLE envio
+ALTER TABLE BASADOS.envio
 ADD CONSTRAINT FK_Envio_Factura 
 FOREIGN KEY (env_factura)
 REFERENCES BASADOS.factura(fact_numero)
 
-ALTER TABLE detalle_compra
-ADD CONSTRAINT FK_Detalle_Compra
+ALTER TABLE BASADOS.detalle_compra
+ADD CONSTRAINT FK_Detalle_Compra_Compra
 FOREIGN KEY (det_compra)
 REFERENCES BASADOS.compra(comp_numero)
 
 ALTER TABLE BASADOS.detalle_compra
-ADD CONSTRAINT FK_Detalle_Compra
+ADD CONSTRAINT FK_Detalle_Compra_Material
 FOREIGN KEY (det_material)
 REFERENCES BASADOS.material(mat_id)
 
 ALTER TABLE BASADOS.detalle_factura
-ADD CONSTRAINT FK_Detalle_Factura
+ADD CONSTRAINT FK_Detalle_Factura_Factura
 FOREIGN KEY (det_factura)
 REFERENCES BASADOS.factura(fact_numero)
 
 ALTER TABLE BASADOS.detalle_factura
-ADD CONSTRAINT FK_Detalle_Factura
+ADD CONSTRAINT FK_Detalle_Factura_Detalle_Pedido
 FOREIGN KEY (det_sillon)
 REFERENCES BASADOS.detalle_pedido(det_sillon)
 
 ALTER TABLE BASADOS.sillon
-ADD CONSTRAINT FK_Sillon
-FOREIGN KEY (sill_medida_alto)
-REFERENCES BASADOS.medida(med_alto)
-
-ALTER TABLE BASADOS.sillon
-ADD CONSTRAINT FK_Sillon
-FOREIGN KEY (sill_medida_ancho)
-REFERENCES BASADOS.medida(med_ancho)
-
-ALTER TABLE BASADOS.sillon
-ADD CONSTRAINT FK_Sillon
-FOREIGN KEY (sill_medida_profundidad)
-REFERENCES BASADOS.medida(med_profundidad)
+ADD CONSTRAINT FK_Sillon_Medida
+FOREIGN KEY (sill_medida_alto, sill_medida_ancho, sill_medida_profundidad)
+REFERENCES BASADOS.medida(med_alto, med_ancho, med_profundidad);
 
 ALTER TABLE BASADOS.material_por_sillon
-ADD CONSTRAINT FK_Material_Por_Sillon
+ADD CONSTRAINT FK_Material_Por_Sillon_Sillon
 FOREIGN KEY (mat_sillon)
 REFERENCES BASADOS.sillon(sill_codigo)
 
 ALTER TABLE BASADOS.material_por_sillon
-ADD CONSTRAINT FK_Material_Por_Sillon
+ADD CONSTRAINT FK_Material_Por_Sillon_Material
 FOREIGN KEY (mat_material)
 REFERENCES BASADOS.material(mat_id)
 
 ALTER TABLE BASADOS.material
-ADD CONSTRAINT FK_Material
+ADD CONSTRAINT FK_Material_Tipo_Material
 FOREIGN KEY (mat_tipo)
 REFERENCES BASADOS.tipo_material(tipo_id)
 
 ALTER TABLE BASADOS.tela
-ADD CONSTRAINT FK_Tela
+ADD CONSTRAINT FK_Tela_Material
 FOREIGN KEY (tela_material)
 REFERENCES BASADOS.material(mat_id)
 
 ALTER TABLE BASADOS.relleno
-ADD CONSTRAINT FK_Relleno
-FOREIGN KEY (relleno_material)
+ADD CONSTRAINT FK_Relleno_Material
+FOREIGN KEY (rell_material)
 REFERENCES BASADOS.material(mat_id)
 
 ALTER TABLE BASADOS.madera
-ADD CONSTRAINT FK_Madera
-FOREIGN KEY (madera_material)
+ADD CONSTRAINT FK_Madera_Material
+FOREIGN KEY (mad_material)
 REFERENCES BASADOS.material(mat_id)
