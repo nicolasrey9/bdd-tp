@@ -4,142 +4,142 @@
 
 */
 
-ALTER TABLE cliente
+ALTER TABLE BASADOS.cliente
 ADD CONSTRAINT FK_Cliente_Direccion 
 FOREIGN KEY (clie_direccion)
-REFERENCES direccion(direc_id)
+REFERENCES BASADOS.direccion(direc_id)
 
-ALTER TABLE localidad
+ALTER TABLE BASADOS.localidad
 ADD CONSTRAINT FK_Localidad_Provincia 
 FOREIGN KEY (local_provincia) 
-REFERENCES provincia(prov_id)
+REFERENCES BASADOS.provincia(prov_id)
 
-ALTER TABLE direccion
+ALTER TABLE BASADOS.direccion
 ADD CONSTRAINT FK_Direccion_Localidad 
 FOREIGN KEY (direc_localidad)
-REFERENCES localidad(local_id)
+REFERENCES BASADOS.localidad(local_id)
 
-ALTER TABLE sucursal
+ALTER TABLE BASADOS.sucursal
 ADD CONSTRAINT FK_Sucursal_Direccion 
 FOREIGN KEY (suc_direccion)
-REFERENCES direccion(direc_id)
+REFERENCES BASADOS.direccion(direc_id)
 
-ALTER TABLE pedido
+ALTER TABLE BASADOS.pedido
 ADD CONSTRAINT FK_Pedido_Sucursal 
 FOREIGN KEY (ped_sucursal)
-REFERENCES sucursal(suc_numero)
+REFERENCES BASADOS.sucursal(suc_numero)
 
-ALTER TABLE pedido
+ALTER TABLE BASADOS.pedido
 ADD CONSTRAINT FK_Pedido_Cliente 
 FOREIGN KEY (ped_cliente)
-REFERENCES cliente(clie_id)
+REFERENCES BASADOS.cliente(clie_id)
 
-ALTER TABLE cancelacion
+ALTER TABLE BASADOS.cancelacion
 ADD CONSTRAINT FK_Cancelacion_Pedido 
 FOREIGN KEY (canc_pedido)
-REFERENCES pedido(ped_numero)
+REFERENCES BASADOS.pedido(ped_numero)
 
-ALTER TABLE detalle_pedido
+ALTER TABLE BASADOS.detalle_pedido
 ADD CONSTRAINT FK_DetallePedido_Pedido 
 FOREIGN KEY (det_pedido) 
-REFERENCES pedido(ped_numero)
+REFERENCES BASADOS.pedido(ped_numero)
 
-ALTER TABLE detalle_pedido    
+ALTER TABLE BASADOS.etalle_pedido    
 ADD CONSTRAINT FK_DetallePedido_Sillon 
 FOREIGN KEY (det_sillon) 
-REFERENCES sillon(sill_codigo)
+REFERENCES BASADOS.sillon(sill_codigo)
 
 ALTER TABLE proveedor
 ADD CONSTRAINT FK_Proveedor_Direccion 
 FOREIGN KEY (prov_direccion)
-REFERENCES direccion(direc_id)
+REFERENCES BASADOS.direccion(direc_id)
 
 ALTER TABLE compra
 ADD CONSTRAINT FK_Compra_Sucursal 
 FOREIGN KEY (comp_sucursal)
-REFERENCES sucursal(suc_numero)
+REFERENCES BASADOS.sucursal(suc_numero)
 
 ALTER TABLE compra
 ADD CONSTRAINT FK_Compra_Proveedor 
 FOREIGN KEY (comp_proveedor)
-REFERENCES provedor(prov_cuit)
+REFERENCES BASADOS.provedor(prov_cuit)
 
 ALTER TABLE factura
 ADD CONSTRAINT FK_Factura_Cliente 
 FOREIGN KEY (fact_cliente) 
-REFERENCES cliente(clie_id)
+REFERENCES BASADOS.cliente(clie_id)
 
 ALTER TABLE factura        
 ADD CONSTRAINT FK_Factura_Sucursal 
 FOREIGN KEY (fact_sucursal)
-REFERENCES sucursal(suc_numero)
+REFERENCES BASADOS.sucursal(suc_numero)
 
 ALTER TABLE envio
 ADD CONSTRAINT FK_Envio_Factura 
 FOREIGN KEY (env_factura)
-REFERENCES factura(fact_numero)
+REFERENCES BASADOS.factura(fact_numero)
 
 ALTER TABLE detalle_compra
 ADD CONSTRAINT FK_Detalle_Compra
 FOREIGN KEY (det_compra)
-REFERENCES compra(comp_numero)
+REFERENCES BASADOS.compra(comp_numero)
 
-ALTER TABLE detalle_compra
+ALTER TABLE BASADOS.detalle_compra
 ADD CONSTRAINT FK_Detalle_Compra
 FOREIGN KEY (det_material)
-REFERENCES material(mat_id)
+REFERENCES BASADOS.material(mat_id)
 
-ALTER TABLE detalle_factura
+ALTER TABLE BASADOS.detalle_factura
 ADD CONSTRAINT FK_Detalle_Factura
 FOREIGN KEY (det_factura)
-REFERENCES factura(fact_numero)
+REFERENCES BASADOS.factura(fact_numero)
 
-ALTER TABLE detalle_factura
+ALTER TABLE BASADOS.detalle_factura
 ADD CONSTRAINT FK_Detalle_Factura
 FOREIGN KEY (det_sillon)
-REFERENCES detalle_pedido(det_sillon)
+REFERENCES BASADOS.detalle_pedido(det_sillon)
 
-ALTER TABLE sillon
+ALTER TABLE BASADOS.sillon
 ADD CONSTRAINT FK_Sillon
 FOREIGN KEY (sill_medida_alto)
-REFERENCES medida(med_alto)
+REFERENCES BASADOS.medida(med_alto)
 
-ALTER TABLE sillon
+ALTER TABLE BASADOS.sillon
 ADD CONSTRAINT FK_Sillon
 FOREIGN KEY (sill_medida_ancho)
-REFERENCES medida(med_ancho)
+REFERENCES BASADOS.medida(med_ancho)
 
-ALTER TABLE sillon
+ALTER TABLE BASADOS.sillon
 ADD CONSTRAINT FK_Sillon
 FOREIGN KEY (sill_medida_profundidad)
-REFERENCES medida(med_profundidad)
+REFERENCES BASADOS.medida(med_profundidad)
 
-ALTER TABLE material_por_sillon
+ALTER TABLE BASADOS.material_por_sillon
 ADD CONSTRAINT FK_Material_Por_Sillon
 FOREIGN KEY (mat_sillon)
-REFERENCES sillon(sill_codigo)
+REFERENCES BASADOS.sillon(sill_codigo)
 
-ALTER TABLE material_por_sillon
+ALTER TABLE BASADOS.material_por_sillon
 ADD CONSTRAINT FK_Material_Por_Sillon
 FOREIGN KEY (mat_material)
-REFERENCES material(mat_id)
+REFERENCES BASADOS.material(mat_id)
 
-ALTER TABLE material
+ALTER TABLE BASADOS.material
 ADD CONSTRAINT FK_Material
 FOREIGN KEY (mat_tipo)
-REFERENCES tipo_material(tipo_id)
+REFERENCES BASADOS.tipo_material(tipo_id)
 
-ALTER TABLE tela
+ALTER TABLE BASADOS.tela
 ADD CONSTRAINT FK_Tela
 FOREIGN KEY (tela_material)
-REFERENCES material(mat_id)
+REFERENCES BASADOS.material(mat_id)
 
-ALTER TABLE relleno
+ALTER TABLE BASADOS.relleno
 ADD CONSTRAINT FK_Relleno
 FOREIGN KEY (relleno_material)
-REFERENCES material(mat_id)
+REFERENCES BASADOS.material(mat_id)
 
-ALTER TABLE madera
+ALTER TABLE BASADOS.madera
 ADD CONSTRAINT FK_Madera
 FOREIGN KEY (madera_material)
-REFERENCES material(mat_id)
+REFERENCES BASADOS.material(mat_id)

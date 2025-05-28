@@ -2,43 +2,43 @@
     23 ENTIDADES
 */
 
-CREATE TABLE cliente(
+CREATE TABLE BASADOS.cliente(
     clie_id BIGINT NOT NULL,
     clie_dni BIGINT NOT NULL,
     clie_nombre NVARCHAR(255) NOT NULL,
     clie_apellido NVARCHAR(255) NOT NULL,
     clie_mail NVARCHAR(255),
     clie_telefono NVARCHAR(255),
-    cle_fecha_nac DATETIME2(6),
+    clie_fecha_nac DATETIME2(6),
     clie_direccion BIGINT
 )
 
 
-CREATE TABLE direccion(
+CREATE TABLE BASADOS.direccion(
     direc_id BIGINT NOT NULL,
     direc_nombre NVARCHAR(255) NOT NULL,
     direc_localidad BIGINT NOT NULL
 )
 
-CREATE TABLE localidad(
+CREATE TABLE BASADOS.localidad(
     local_id BIGINT NOT NULL,
     local_nombre NVARCHAR(255) NOT NULL,
     local_provincia BIGINT NOT NULL
 )
 
-CREATE TABLE provincia(
+CREATE TABLE BASADOS.provincia(
     prov_id BIGINT NOT NULL,
     prov_nombre NVARCHAR(255) NOT NULL
 )
 
-CREATE TABLE sucursal(
+CREATE TABLE BASADOS.sucursal(
     suc_numero BIGINT NOT NULL,
     suc_mail NVARCHAR(255),
     suc_telefono NVARCHAR(255),
     suc_direccion BIGINT
 )
 
-CREATE TABLE pedido(
+CREATE TABLE BASADOS.pedido(
     ped_numero DECIMAL(18,0) NOT NULL,
     ped_fecha DATETIME2(6),
     ped_estado NVARCHAR(255),
@@ -47,20 +47,20 @@ CREATE TABLE pedido(
     ped_cliente BIGINT
 )
 
-CREATE TABLE detalle_pedido(
+CREATE TABLE BASADOS.detalle_pedido(
     det_pedido DECIMAL(18,0) NOT NULL,
     det_sillon BIGINT NOT NULL,
     det_cantidad BIGINT,
     det_linea BIGINT
 )
 
-CREATE TABLE cancelacion(
+CREATE TABLE BASADOS.cancelacion(
     canc_pedido DECIMAL(18,0) NOT NULL,
     canc_fecha DATETIME2(6),
     canc_motivo VARCHAR(255)
 )
 
-CREATE TABLE proveedor(
+CREATE TABLE BASADOS.proveedor(
     prov_cuit NVARCHAR(255) NOT NULL,
     prov_razon_social NVARCHAR(255),
     prov_telefono NVARCHAR(255),
@@ -68,7 +68,7 @@ CREATE TABLE proveedor(
     prov_direccion BIGINT
 )
 
-CREATE TABLE compra(
+CREATE TABLE BASADOS.compra(
     comp_numero DECIMAL(18,0) NOT NULL,
     comp_fecha DATETIME2(6),
     comp_total DECIMAL(18,2),
@@ -76,21 +76,21 @@ CREATE TABLE compra(
     comp_proveedor NVARCHAR(255)
 )
 
-CREATE TABLE detalle_compra(
+CREATE TABLE BASADOS.detalle_compra(
     det_compra DECIMAL(18,0) NOT NULL,
     det_material BIGINT NOT NULL,
     det_precio_unitario DECIMAL(18,2),
     det_cantidad DECIMAL(18,0)
 )
 
-CREATE TABLE factura(
+CREATE TABLE BASADOS.factura(
     fact_numero BIGINT NOT NULL,
     fact_fecha DATETIME2(6),
     fact_cliente BIGINT,
     fact_sucursal BIGINT
 )
 
-CREATE TABLE detalle_factura(
+CREATE TABLE BASADOS.detalle_factura(
     det_factura BIGINT NOT NULL,
     det_sillon BIGINT NOT NULL,
     det_pedido DECIMAL(18,0) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE detalle_factura(
     det_cantidad BIGINT
 )
 
-CREATE TABLE envio(
+CREATE TABLE BASADOS.envio(
     env_numero DECIMAL(18,0) NOT NULL,
     env_fecha_programada DATETIME2(6),
     env_fecha DATETIME2(6),
@@ -109,7 +109,7 @@ CREATE TABLE envio(
 )
 
 
-CREATE TABLE modelo(
+CREATE TABLE BASADOS.modelo(
     mod_codigo BIGINT NOT NULL,
     mod_modelo NVARCHAR(255),
     mod_descripcion NVARCHAR(255),
@@ -117,7 +117,7 @@ CREATE TABLE modelo(
 )
 
 
-CREATE TABLE sillon(
+CREATE TABLE BASADOS.sillon(
     sill_codigo BIGINT NOT NULL,
     sill_modelo BIGINT,
     sill_medida_alto DECIMAL(18,2),
@@ -125,19 +125,19 @@ CREATE TABLE sillon(
     sill_medida_profundidad DECIMAL(18,2)
 )
 
-CREATE TABLE medida(
+CREATE TABLE BASADOS.medida(
     med_alto DECIMAL(18,2) NOT NULL,
     med_ancho DECIMAL(18,2) NOT NULL,
     med_profundidad DECIMAL(18,2) NOT NULL,
     med_precio DECIMAL(18,2)
 )
 
-CREATE TABLE material_por_sillon(
+CREATE TABLE BASADOS.material_por_sillon(
     mat_sillon BIGINT NOT NULL,
     mat_material BIGINT NOT NULL
 )
 
-CREATE TABLE material(
+CREATE TABLE BASADOS.material(
     mat_id BIGINT NOT NULL,
     mat_nombre NVARCHAR(255),
     mat_descripcion NVARCHAR(255),
@@ -145,23 +145,23 @@ CREATE TABLE material(
     mat_tipo BIGINT
 )
 
-CREATE TABLE tipo_material(
+CREATE TABLE BASADOS.tipo_material(
     tipo_id BIGINT NOT NULL,
     tipo_nombre NVARCHAR(255)
 )
 
-CREATE TABLE tela(
+CREATE TABLE BASADOS.tela(
     tela_material BIGINT NOT NULL,
     tela_color NVARCHAR(255),
     tela_textura NVARCHAR(255)
 )
 
-CREATE TABLE relleno(
+CREATE TABLE BASADOS.relleno(
     rell_material BIGINT NOT NULL,
     rell_densidad DECIMAL(38,2)
 )
 
-CREATE TABLE madera(
+CREATE TABLE BASADOS.madera(
     mad_material BIGINT NOT NULL,
     mad_color NVARCHAR(255),
     mad_dureza NVARCHAR(255)
