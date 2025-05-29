@@ -3,31 +3,26 @@
 */
 
 CREATE TABLE BASADOS.cliente(
-    clie_id BIGINT NOT NULL,
+    clie_id BIGINT IDENTITY(1,1) NOT NULL,
     clie_dni BIGINT NOT NULL,
     clie_nombre NVARCHAR(255) NOT NULL,
     clie_apellido NVARCHAR(255) NOT NULL,
     clie_mail NVARCHAR(255),
     clie_telefono NVARCHAR(255),
     clie_fecha_nac DATETIME2(6),
-    clie_direccion BIGINT
+    clie_direccion NVARCHAR(255),
+    clie_localidad BIGINT
 )
 
-
-CREATE TABLE BASADOS.direccion(
-    direc_id BIGINT NOT NULL,
-    direc_nombre NVARCHAR(255) NOT NULL,
-    direc_localidad BIGINT NOT NULL
-)
 
 CREATE TABLE BASADOS.localidad(
-    local_id BIGINT NOT NULL,
+    local_id BIGINT IDENTITY(1,1) NOT NULL,
     local_nombre NVARCHAR(255) NOT NULL,
     local_provincia BIGINT NOT NULL
 )
 
 CREATE TABLE BASADOS.provincia(
-    prov_id BIGINT NOT NULL,
+    prov_id BIGINT IDENTITY(1,1) NOT NULL,
     prov_nombre NVARCHAR(255) NOT NULL
 )
 
@@ -35,7 +30,8 @@ CREATE TABLE BASADOS.sucursal(
     suc_numero BIGINT NOT NULL,
     suc_mail NVARCHAR(255),
     suc_telefono NVARCHAR(255),
-    suc_direccion BIGINT
+    suc_direccion NVARCHAR(255),
+    suc_localidad BIGINT
 )
 
 CREATE TABLE BASADOS.pedido(
@@ -65,7 +61,8 @@ CREATE TABLE BASADOS.proveedor(
     prov_razon_social NVARCHAR(255),
     prov_telefono NVARCHAR(255),
     prov_mail NVARCHAR(255),
-    prov_direccion BIGINT
+    prov_direccion NVARCHAR(255),
+    prov_localidad BIGINT
 )
 
 CREATE TABLE BASADOS.compra(
@@ -138,7 +135,7 @@ CREATE TABLE BASADOS.material_por_sillon(
 )
 
 CREATE TABLE BASADOS.material(
-    mat_id BIGINT NOT NULL,
+    mat_id BIGINT IDENTITY(1,1) NOT NULL,
     mat_nombre NVARCHAR(255),
     mat_descripcion NVARCHAR(255),
     mat_precio DECIMAL(38,2),
@@ -146,7 +143,7 @@ CREATE TABLE BASADOS.material(
 )
 
 CREATE TABLE BASADOS.tipo_material(
-    tipo_id BIGINT NOT NULL,
+    tipo_id BIGINT IDENTITY(1,1) NOT NULL,
     tipo_nombre NVARCHAR(255)
 )
 

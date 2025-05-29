@@ -10,10 +10,6 @@ ALTER TABLE BASADOS.localidad
 ADD CONSTRAINT PK_localidad 
 PRIMARY KEY (local_id);
 
-ALTER TABLE BASADOS.direccion
-ADD CONSTRAINT PK_direccion 
-PRIMARY KEY (direc_id);
-
 ALTER TABLE BASADOS.sucursal
 ADD CONSTRAINT PK_sucursal 
 PRIMARY KEY (suc_numero);

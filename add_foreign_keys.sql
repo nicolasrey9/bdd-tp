@@ -1,28 +1,17 @@
-/*
-
-25 FOREIGN KEYS
-
-*/
-
 ALTER TABLE BASADOS.cliente
-ADD CONSTRAINT FK_Cliente_Direccion 
-FOREIGN KEY (clie_direccion)
-REFERENCES BASADOS.direccion(direc_id)
+ADD CONSTRAINT FK_Cliente_Localidad 
+FOREIGN KEY (clie_localidad)
+REFERENCES BASADOS.localidad(local_id)
 
 ALTER TABLE BASADOS.localidad
 ADD CONSTRAINT FK_Localidad_Provincia 
 FOREIGN KEY (local_provincia) 
 REFERENCES BASADOS.provincia(prov_id)
 
-ALTER TABLE BASADOS.direccion
-ADD CONSTRAINT FK_Direccion_Localidad 
-FOREIGN KEY (direc_localidad)
-REFERENCES BASADOS.localidad(local_id)
-
 ALTER TABLE BASADOS.sucursal
-ADD CONSTRAINT FK_Sucursal_Direccion 
-FOREIGN KEY (suc_direccion)
-REFERENCES BASADOS.direccion(direc_id)
+ADD CONSTRAINT FK_Sucursal_Localidad
+FOREIGN KEY (suc_localidad)
+REFERENCES BASADOS.localidad(local_id)
 
 ALTER TABLE BASADOS.pedido
 ADD CONSTRAINT FK_Pedido_Sucursal 
@@ -50,9 +39,9 @@ FOREIGN KEY (det_sillon)
 REFERENCES BASADOS.sillon(sill_codigo)
 
 ALTER TABLE BASADOS.proveedor
-ADD CONSTRAINT FK_Proveedor_Direccion 
-FOREIGN KEY (prov_direccion)
-REFERENCES BASADOS.direccion(direc_id)
+ADD CONSTRAINT FK_Proveedor_Localidad
+FOREIGN KEY (prov_localidad)
+REFERENCES BASADOS.localidad(local_id)
 
 ALTER TABLE BASADOS.compra
 ADD CONSTRAINT FK_Compra_Sucursal 
