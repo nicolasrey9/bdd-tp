@@ -35,42 +35,15 @@ INSERT BASADOS.sillon(sill_codigo, sill_modelo, sill_medida_alto, sill_medida_an
     Sillon_Medida_Ancho, Sillon_Medida_Profundidad FROM gd_esquema.Maestra
     WHERE Sillon_Codigo is not null
 
-/*
-CREATE PROCEDURE sp_insert_detalle_pedido
-    @det_pedido decimal(18,0),
-    @det_sillon bigint,
-    @det_cantidad bigint
-AS
-BEGIN
-    DECLARE @maxLinea bigint;
 
-    SELECT @maxLinea = ISNULL(MAX(det_linea), 0)
-    FROM Detalle_pedido
-    WHERE det_pedido = @det_pedido;
 
-    INSERT INTO Detalle_pedido (det_pedido, det_sillon, det_cantidad, det_linea)
-    VALUES (@det_pedido, @det_sillon, @det_cantidad, @maxLinea + 1);
-END;
-*/
-delete from BASADOS.detalle_pedido
-select * from BASADOS.detalle_pedido order by 1,4
-
--- TODO: VER COMO REEMPLAZAR EL NULL
+---------------------------------------------------
+------REHACER CON LOS CAMBIOS CORRESPONDIENTES-----
+---------------------------------------------------
 INSERT BASADOS.detalle_pedido(det_pedido, det_sillon, det_cantidad, det_linea)
-    (SELECT distinct Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad
+    SELECT distinct Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad,
+    ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)) AS det_linea
     FROM gd_esquema.Maestra where Pedido_Numero is not NULL
-    and Sillon_Codigo is not null order by 1,2,3 )
-    
-ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)) AS det_linea
-
-
-INSERT BASADOS.detalle_factura(det_factura, det_sillon, det_pedido, det_precio_unitario, det_linea, det_cantidad)
-    SELECT Factura_Numero, Sillon_Codigo, Pedido_Numero,
-    Detalle_Factura_Precio, 
-    (SELECT det_linea from BASADOS.detalle_pedido where Sillon_Codigo=det_sillon 
-    and Pedido_Numero=det_pedido) , Detalle_Compra_Cantidad from gd_esquema.Maestra
-    where Factura_Numero is not null
     and Sillon_Codigo is not null
+    GROUP by Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad
 
-select Factura_Numero, Pedido_Numero, Detalle_Factura_Precio from gd_esquema.Maestra 
-where Detalle_Factura_Precio is not NULL
