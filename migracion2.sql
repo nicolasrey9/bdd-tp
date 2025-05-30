@@ -107,7 +107,7 @@ BEGIN
     SELECT distinct Pedido_Numero, Pedido_Estado, Pedido_Total, 
     Sucursal_NroSucursal,
     (select clie_id from BASADOS.cliente where clie_dni=Cliente_Dni and clie_direccion=Cliente_Direccion)
-     FROM gd_esquema.Maestra WHERE Pedido_Numero is not NULL
+    FROM gd_esquema.Maestra WHERE Pedido_Numero is not NULL
     
     INSERT BASADOS.factura(fact_numero, fact_fecha, fact_cliente, fact_sucursal)
     SELECT distinct Factura_Numero, Factura_Fecha, 

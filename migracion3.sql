@@ -52,12 +52,17 @@ BEGIN
     VALUES (@det_pedido, @det_sillon, @det_cantidad, @maxLinea + 1);
 END;
 */
+delete from BASADOS.detalle_pedido
+select * from BASADOS.detalle_pedido order by 1,4
 
 -- TODO: VER COMO REEMPLAZAR EL NULL
 INSERT BASADOS.detalle_pedido(det_pedido, det_sillon, det_cantidad, det_linea)
-    SELECT distinct Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad,
-    null FROM gd_esquema.Maestra where Pedido_Numero is not NULL
-    and Sillon_Codigo is not null
+    (SELECT distinct Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad
+    FROM gd_esquema.Maestra where Pedido_Numero is not NULL
+    and Sillon_Codigo is not null order by 1,2,3 )
+    
+ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)) AS det_linea
+
 
 INSERT BASADOS.detalle_factura(det_factura, det_sillon, det_pedido, det_precio_unitario, det_linea, det_cantidad)
     SELECT Factura_Numero, Sillon_Codigo, Pedido_Numero,
