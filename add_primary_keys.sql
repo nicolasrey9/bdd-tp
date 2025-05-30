@@ -24,7 +24,7 @@ PRIMARY KEY (canc_pedido);
 
 ALTER TABLE BASADOS.detalle_pedido
 ADD CONSTRAINT PK_detalle_pedido 
-PRIMARY KEY (det_pedido, det_sillon);
+PRIMARY KEY (det_pedido, det_numero);
 
 ALTER TABLE BASADOS.proveedor
 ADD CONSTRAINT PK_proveedor 
@@ -44,7 +44,7 @@ PRIMARY KEY (env_numero);
 
 ALTER TABLE BASADOS.detalle_factura
 ADD CONSTRAINT PK_detalle_factura 
-PRIMARY KEY (det_factura, det_sillon);
+PRIMARY KEY (det_factura, det_pedido, det_numero);
 
 ALTER TABLE BASADOS.detalle_compra
 ADD CONSTRAINT PK_detalle_compra
