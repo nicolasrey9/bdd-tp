@@ -13,11 +13,11 @@ BEGIN
 END
 GO
 
-
 PRINT 'Ejecutando create_tables.sql...'
 GO
 :r "create_tables.sql"
 GO
+
 PRINT 'Tablas creadas en esquema BASADOS'
 
 PRINT 'Ejecutando add_primary_keys.sql...'
@@ -33,11 +33,7 @@ GO
 PRINT 'Foreign keys agregadas en esquema BASADOS'
 GO
 
-
-
 PRINT '=== PROCESO DE CREACION COMPLETADO ==='
 PRINT 'Todos los objetos fueron creados en el esquema BASADOS'
 GO
-
-
 
