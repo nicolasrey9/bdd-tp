@@ -98,11 +98,17 @@ BEGIN
     FROM gd_esquema.Maestra where Material_Tipo = 'Madera'
     
     INSERT BASADOS.cliente(clie_dni, clie_nombre, clie_apellido, clie_mail, clie_telefono, clie_fecha_nac, clie_direccion, clie_localidad)
-    SELECT DISTINCT Cliente_Dni, Cliente_Nombre, Cliente_Apellido, Cliente_Mail, 
-    Cliente_Telefono, Cliente_FechaNacimiento, Cliente_Direccion, 
-    (select local_id from BASADOS.localidad where local_nombre=Cliente_Localidad 
-    and local_provincia=(select prov_id from BASADOS.provincia where prov_nombre=Cliente_Provincia)) from gd_esquema.Maestra WHERE Cliente_Dni is not NULL
-    
+        SELECT DISTINCT Cliente_Dni, Cliente_Nombre, Cliente_Apellido, Cliente_Mail, 
+        Cliente_Telefono, Cliente_FechaNacimiento, Cliente_Direccion, 
+        (select local_id from BASADOS.localidad 
+        where local_nombre=Cliente_Localidad 
+        and local_provincia=
+        (select prov_id from BASADOS.provincia 
+        where prov_nombre=Cliente_Provincia)) 
+        from gd_esquema.Maestra 
+        WHERE Cliente_Dni is not NULL
+        
+
     INSERT BASADOS.pedido(ped_numero, ped_estado, ped_total, ped_sucursal, ped_cliente)
     SELECT distinct Pedido_Numero, Pedido_Estado, Pedido_Total, 
     Sucursal_NroSucursal,
@@ -136,6 +142,11 @@ BEGIN
     Sillon_Medida_Precio from gd_esquema.Maestra
     where Sillon_Medida_Alto is not null
 
+    INSERT BASADOS.compra(comp_numero, comp_fecha, comp_total, comp_sucursal, comp_proveedor)
+        SELECT distinct Compra_Numero, Compra_Fecha, Compra_Total,
+        Sucursal_NroSucursal, Proveedor_Cuit
+        FROM gd_esquema.Maestra where Compra_Numero is not null
+
     INSERT BASADOS.detalle_compra(det_compra, det_material, det_precio_unitario, det_cantidad)
     SELECT Compra_Numero, (
             SELECT mat_id 
@@ -149,6 +160,7 @@ BEGIN
         ),
      Detalle_Compra_Precio, Detalle_Compra_Cantidad FROM gd_esquema.Maestra WHERE Compra_Numero IS NOT NULL
 
+    
     INSERT BASADOS.sillon(sill_codigo, sill_modelo, sill_medida_alto, sill_medida_ancho, sill_medida_profundidad)
     SELECT distinct Sillon_Codigo, Sillon_Modelo_Codigo, Sillon_Medida_Alto,
     Sillon_Medida_Ancho, Sillon_Medida_Profundidad FROM gd_esquema.Maestra
@@ -162,7 +174,24 @@ BEGIN
                 (   SELECT tipo_id 
                     FROM BASADOS.tipo_material 
                     WHERE tipo_nombre = Material_Tipo
-                )), Material_Descripcion FROM gd_esquema.Maestra WHERE Sillon_Codigo IS NOT NULL
+                )) FROM gd_esquema.Maestra WHERE Sillon_Codigo IS NOT NULL
+
+    INSERT BASADOS.detalle_pedido(det_pedido, det_numero, det_cantidad, det_sillon)
+        SELECT Pedido_Numero,
+        ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)),
+        Detalle_Pedido_Cantidad,
+        Sillon_Codigo  FROM gd_esquema.Maestra where Pedido_Numero is not NULL
+        and Sillon_Codigo is not null
+        GROUP by Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad
+
+    INSERT BASADOS.detalle_factura(det_factura, det_pedido, det_numero, det_precio_unitario, det_cantidad)
+        SELECT Factura_Numero, Pedido_Numero, 
+        (select det_numero from BASADOS.detalle_pedido 
+        where det_pedido=Pedido_Numero and det_cantidad=Detalle_Factura_Cantidad and Detalle_Factura_Precio=(select )),
+        Detalle_Factura_Precio, Detalle_Factura_Cantidad FROM gd_esquema.Maestra where Detalle_Factura_Precio is not null
+
+    SELECT Detalle_Pedido_Precio FROM gd_esquema.Maestra
+    
 END              
 GO
 
