@@ -47,8 +47,7 @@ CREATE TABLE BASADOS.detalle_pedido(
     det_pedido DECIMAL(18,0) NOT NULL,
     det_numero BIGINT NOT NULL,
     det_cantidad BIGINT,
-    det_sillon BIGINT,
-    det_precio_unitario DECIMAL(18,2)
+    det_sillon BIGINT
 )
 
 CREATE TABLE BASADOS.cancelacion(

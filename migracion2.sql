@@ -2,7 +2,7 @@ CREATE PROCEDURE migracion
 AS
 BEGIN
     INSERT BASADOS.provincia(prov_nombre) 
-        SELECT Proveedor_Provincia FROM gd_esquema.Maestra WHERE Proveedor_Provincia IS NOT NULL
+        SELECT DISTINCT Proveedor_Provincia FROM gd_esquema.Maestra WHERE Proveedor_Provincia IS NOT NULL
         UNION
         SELECT Cliente_Provincia FROM gd_esquema.Maestra WHERE Cliente_Provincia IS NOT NULL
         UNION
@@ -176,22 +176,33 @@ BEGIN
                     WHERE tipo_nombre = Material_Tipo
                 )) FROM gd_esquema.Maestra WHERE Sillon_Codigo IS NOT NULL
 
-    INSERT BASADOS.detalle_pedido(det_pedido, det_numero, det_cantidad, det_sillon)
-        SELECT Pedido_Numero,
-        ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)),
-        Detalle_Pedido_Cantidad,
-        Sillon_Codigo  FROM gd_esquema.Maestra where Pedido_Numero is not NULL
-        and Sillon_Codigo is not null
-        GROUP by Pedido_Numero, Sillon_Codigo, Detalle_Pedido_Cantidad
+    INSERT INTO BASADOS.detalle_pedido(det_pedido, det_numero, det_cantidad, det_sillon)
+        SELECT 
+            Pedido_Numero,
+            ROW_NUMBER() OVER (PARTITION BY Pedido_Numero ORDER BY (SELECT NULL)),
+            MAX(Detalle_Pedido_Cantidad),
+            Sillon_Codigo  
+        FROM gd_esquema.Maestra 
+        WHERE Pedido_Numero IS NOT NULL
+        AND Sillon_Codigo IS NOT NULL
+        GROUP BY Pedido_Numero, Sillon_Codigo;
 
     INSERT BASADOS.detalle_factura(det_factura, det_pedido, det_numero, det_precio_unitario, det_cantidad)
-        SELECT Factura_Numero, Pedido_Numero, 
-        (select det_numero from BASADOS.detalle_pedido 
-        where det_pedido=Pedido_Numero and det_cantidad=Detalle_Factura_Cantidad and Detalle_Factura_Precio=(select )),
+        SELECT Factura_Numero, Pedido_Numero,
+            (select 
+                top 1 det_numero 
+            from 
+                BASADOS.detalle_pedido
+            where 
+                det_pedido=Pedido_Numero and det_cantidad=Detalle_Factura_Cantidad
+            order by ABS(Detalle_Pedido_Precio - (select distinct sub.Detalle_Pedido_Precio 
+            from gd_esquema.Maestra sub where sub.Pedido_Numero=det_pedido and det_sillon=sub.Sillon_Codigo 
+            and sub.Detalle_Pedido_Precio is not null)) asc),
         Detalle_Factura_Precio, Detalle_Factura_Cantidad FROM gd_esquema.Maestra where Detalle_Factura_Precio is not null
+        order by 2
 
-    SELECT Detalle_Pedido_Precio FROM gd_esquema.Maestra
     
+
 END              
 GO
 
