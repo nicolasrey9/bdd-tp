@@ -13,15 +13,16 @@ INSERT BASADOS.provincia
     FROM gd_esquema.Maestra
     WHERE Sucursal_Provincia IS NOT NULL
 
-INSERT BASADOS.localidad
-    (local_nombre, local_provincia)
-    SELECT Proveedor_Localidad,
-        (SELECT prov_id
-        from BASADOS.provincia
-        where prov_nombre = Proveedor_Provincia)
-    FROM gd_esquema.Maestra
-    WHERE Proveedor_Localidad IS NOT NULL
+    INSERT BASADOS.localidad (local_nombre, local_provincia)
+    SELECT DISTINCT
+        m.Proveedor_Localidad, p.prov_id
+    FROM gd_esquema.Maestra m
+    JOIN BASADOS.provincia p
+        ON p.prov_nombre = m.Proveedor_Provincia
+    WHERE m.Proveedor_Localidad IS NOT NULL
+    
     UNION
+    
     SELECT Cliente_Localidad,
         (SELECT prov_id
         from BASADOS.provincia
