@@ -1,3 +1,10 @@
+CREATE INDEX idx_prov_nombre ON BASADOS.provincia (prov_nombre);
+CREATE INDEX idx_local_nombre_provincia ON BASADOS.localidad (local_nombre, local_provincia);
+CREATE INDEX idx_clie_dni_direccion ON BASADOS.cliente (clie_dni, clie_direccion);
+CREATE INDEX idx_mat_nombre_tipo ON BASADOS.material (mat_nombre, mat_tipo);
+CREATE INDEX idx_tipo_nombre ON BASADOS.tipo_material (tipo_nombre);
+
+
 
 INSERT BASADOS.provincia
     (prov_nombre)
@@ -13,27 +20,22 @@ INSERT BASADOS.provincia
     FROM gd_esquema.Maestra
     WHERE Sucursal_Provincia IS NOT NULL
 
+
 INSERT BASADOS.localidad
     (local_nombre, local_provincia)
-    SELECT Proveedor_Localidad,
-        (SELECT prov_id
-        from BASADOS.provincia
-        where prov_nombre = Proveedor_Provincia)
-    FROM gd_esquema.Maestra
-    WHERE Proveedor_Localidad IS NOT NULL
+    SELECT Proveedor_Localidad, prov_id
+    FROM gd_esquema.Maestra JOIN
+    BASADOS.provincia on prov_nombre=Proveedor_Provincia
     UNION
-    SELECT Cliente_Localidad,
-        (SELECT prov_id
-        from BASADOS.provincia
-        where prov_nombre = Cliente_Provincia)
-    FROM gd_esquema.Maestra
-    WHERE Cliente_Localidad IS NOT NULL
+    SELECT Cliente_Localidad, prov_id
+    FROM gd_esquema.Maestra JOIN
+    BASADOS.provincia on prov_nombre=Cliente_Provincia
     UNION
-    SELECT Sucursal_Localidad, (SELECT prov_id
-        from BASADOS.provincia
-        where prov_nombre = Sucursal_Provincia)
-    FROM gd_esquema.Maestra
-    WHERE Sucursal_Localidad IS NOT NULL
+    SELECT Sucursal_Localidad, prov_id
+    FROM gd_esquema.Maestra JOIN
+    BASADOS.provincia on prov_nombre=Sucursal_Provincia
+
+
 
 INSERT BASADOS.sucursal
     (suc_numero, suc_mail, suc_telefono, suc_direccion, suc_localidad)
