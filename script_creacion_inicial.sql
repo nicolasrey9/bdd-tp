@@ -37,3 +37,17 @@ PRINT '=== PROCESO DE CREACION COMPLETADO ==='
 PRINT 'Todos los objetos fueron creados en el esquema BASADOS'
 GO
 
+PRINT 'INICIANDO PROCESO DE MIGRACION'
+PRINT 'Todos los objetos fueron creados en el esquema BASADOS'
+GO
+
+PRINT 'Ejecutando migrate_tables.sql...'
+GO
+:r "migrate_tables.sql"
+GO
+PRINT 'Tablas migradas en esquema BASADOS'
+GO
+
+PRINT '=== PROCESO DE MIGRACION COMPLETADO ==='
+PRINT 'Todos los objetos fueron creados en el esquema BASADOS'
+GO
