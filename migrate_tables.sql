@@ -3,6 +3,16 @@ CREATE INDEX idx_local_nombre_provincia ON BASADOS.localidad (local_nombre, loca
 CREATE INDEX idx_clie_dni_direccion ON BASADOS.cliente (clie_dni, clie_direccion);
 CREATE INDEX idx_mat_nombre_tipo ON BASADOS.material (mat_nombre, mat_tipo);
 CREATE INDEX idx_tipo_nombre ON BASADOS.tipo_material (tipo_nombre);
+CREATE INDEX idx_localidad_provincia ON BASADOS.localidad(local_provincia);
+CREATE INDEX idx_sucursal_localidad ON BASADOS.sucursal(suc_localidad);
+CREATE INDEX idx_cliente_localidad ON BASADOS.cliente(clie_localidad);
+CREATE INDEX idx_pedido_sucursal ON BASADOS.pedido(ped_sucursal);
+CREATE INDEX idx_pedido_cliente ON BASADOS.pedido(ped_cliente);
+CREATE INDEX idx_factura_cliente ON BASADOS.factura(fact_cliente);
+CREATE INDEX idx_factura_sucursal ON BASADOS.factura(fact_sucursal);
+CREATE INDEX idx_compra_sucursal ON BASADOS.compra(comp_sucursal);
+CREATE INDEX idx_compra_proveedor ON BASADOS.compra(comp_proveedor);
+CREATE INDEX idx_sillon_modelo ON BASADOS.sillon(sill_modelo);
 
 
 
@@ -276,3 +286,21 @@ INSERT BASADOS.detalle_factura
     WHERE Factura_Numero IS NOT NULL
         AND Pedido_Numero IS NOT NULL
         AND Detalle_Factura_Precio IS NOT NULL
+
+
+
+DROP INDEX idx_prov_nombre ON BASADOS.provincia;
+DROP INDEX idx_local_nombre_provincia ON BASADOS.localidad;
+DROP INDEX idx_clie_dni_direccion ON BASADOS.cliente;
+DROP INDEX idx_mat_nombre_tipo ON BASADOS.material;
+DROP INDEX idx_tipo_nombre ON BASADOS.tipo_material;
+DROP INDEX idx_localidad_provincia ON BASADOS.localidad;
+DROP INDEX idx_sucursal_localidad ON BASADOS.sucursal;
+DROP INDEX idx_cliente_localidad ON BASADOS.cliente;
+DROP INDEX idx_pedido_sucursal ON BASADOS.pedido;
+DROP INDEX idx_pedido_cliente ON BASADOS.pedido;
+DROP INDEX idx_factura_cliente ON BASADOS.factura;
+DROP INDEX idx_factura_sucursal ON BASADOS.factura;
+DROP INDEX idx_compra_sucursal ON BASADOS.compra;
+DROP INDEX idx_compra_proveedor ON BASADOS.compra;
+DROP INDEX idx_sillon_modelo ON BASADOS.sillon;
