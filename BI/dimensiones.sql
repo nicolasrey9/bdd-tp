@@ -42,27 +42,30 @@ SELECT
 FROM dias
 OPTION (MAXRECURSION 0);
 -----------------------------
-!!!!---- DIMENSION DIRECCION (A CHEQUEAR!!) ----!!!
--------------------------------
-CREATE TABLE BASADOS.BI_Dim_Direccion (
+---- DIMENSION UBICACION-----
+-----------------------------
+CREATE TABLE BASADOS.BI_Dim_Ubicacion (
     direccion_id NVARCHAR(255),
-    local_id BIGINT,
-    prov_id BIGINT
+    local_nombre NVARCHAR(255),
+    prov_nombre NVARCHAR(255)
 );
 
-ALTER TABLE BASADOS.BI_Dim_Direccion
-ADD CONSTRAINT PK_Dim_Direccion 
-PRIMARY KEY (direccion_id,local_id,prov_id);
+ALTER TABLE BASADOS.BI_Dim_Ubicacion
+ADD CONSTRAINT PK_Dim_Ubicacion 
+PRIMARY KEY (direccion_id,local_nombre,prov_nombre);
 
-INSERT INTO BASADOS.BI_Dim_Direccion (direccion_id,local_id, prov_id)
-    SELECT distinct clie_direccion, clie_localidad, local_provincia from BASADOS.cliente
+INSERT INTO BASADOS.BI_Dim_Ubicacion (direccion_id,local_nombre, prov_nombre)
+    SELECT distinct clie_direccion, local_nombre, prov_nombre from BASADOS.cliente
                                     join BASADOS.localidad on clie_localidad = local_id
+                                    join BASADOS.provincia on prov_id = local_provincia
     UNION
-    SELECT distinct suc_direccion, suc_localidad, local_provincia from BASADOS.sucursal
+    SELECT distinct suc_direccion, local_nombre, prov_nombre from BASADOS.sucursal
                                     join BASADOS.localidad on suc_localidad = local_id
+                                    join BASADOS.provincia on prov_id = local_provincia
     UNION
-    SELECT distinct prov_direccion, prov_localidad, local_provincia from BASADOS.proveedor
+    SELECT distinct prov_direccion, local_nombre, prov_nombre from BASADOS.proveedor
                                     join BASADOS.localidad on prov_localidad = local_id
+                                    join BASADOS.provincia on prov_id = local_provincia
 
 /**********************************************************************
 DIMENSIÓN RANGO ETARIO CLIENTES
