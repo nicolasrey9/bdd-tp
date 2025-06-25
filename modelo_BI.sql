@@ -42,18 +42,28 @@ SELECT
 FROM dias
 OPTION (MAXRECURSION 0);
 -----------------------------
-!!!!---- DIMENSION LOCALIDAD (A CHEQUEAR!!) ----!!!
------------------------------
-CREATE TABLE BASADOS.BI_Dim_Localidad (
-    local_id BIGINT PRIMARY KEY,
-    local_provincia BIGINT
+!!!!---- DIMENSION DIRECCION (A CHEQUEAR!!) ----!!!
+-------------------------------
+CREATE TABLE BASADOS.BI_Dim_Direccion (
+    direccion_id NVARCHAR(255),
+    local_id BIGINT,
+    prov_id BIGINT
 );
 
-INSERT INTO BASADOS.BI_Dim_Localidad (local_id, local_provincia)
-SELECT 
-    local_id,
-    local_provincia
-FROM BASADOS.localidad
+ALTER TABLE BASADOS.BI_Dim_Direccion
+ADD CONSTRAINT PK_Dim_Direccion 
+PRIMARY KEY (direccion_id,local_id,prov_id);
+
+INSERT INTO BASADOS.BI_Dim_Direccion (direccion_id,local_id, prov_id)
+    SELECT distinct clie_direccion, clie_localidad, local_provincia from BASADOS.cliente
+                                    join BASADOS.localidad on clie_localidad = local_id
+    UNION
+    SELECT distinct suc_direccion, suc_localidad, local_provincia from BASADOS.sucursal
+                                    join BASADOS.localidad on suc_localidad = local_id
+    UNION
+    SELECT distinct prov_direccion, prov_localidad, local_provincia from BASADOS.proveedor
+                                    join BASADOS.localidad on prov_localidad = local_id
+
 /**********************************************************************
 DIMENSIÓN RANGO ETARIO CLIENTES
 **********************************************************************/
@@ -142,7 +152,18 @@ FROM BASADOS.sucursal;
 /**********************************************************************
 TABLA DE HECHOS VENTAs
 **********************************************************************/
-
+CREATE TABLE BASADOS.BI_Hechos_Ventas (
+    venta_id INT IDENTITY(1,1) PRIMARY KEY,
+    tiempo_id INT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Tiempo(tiempo_id),
+    sucursal_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Sucursal(suc_numero),
+    localidad_cliente_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id),
+    rango_id TINYINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_RangoEtario(rango_id),
+    turno_id TINYINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Turno(turno_id),
+    modelo_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Modelo(modelo_id),
+    cantidad INT NOT NULL,
+    monto_total DECIMAL(18,2) NOT NULL,
+    costo_envio DECIMAL(18,2) NOT NULL
+);
 /**********************************************************************
 TABLA DE HECHOS COMPRAs
 **********************************************************************/
@@ -152,3 +173,5 @@ TABLA DE HECHOS PEDIDOs
 /**********************************************************************
 TABLA DE HECHOS ENVIOs
 **********************************************************************/
+
+/* Primera posible vista de las ganancias */
