@@ -51,9 +51,9 @@ CREATE TABLE BASADOS.BI_Dim_Localidad (
 
 INSERT INTO BASADOS.BI_Dim_Localidad (local_id, local_provincia)
 SELECT 
-    loc.local_id,
-    loc.local_provincia
-FROM BASADOS.localidad loc
+    local_id,
+    local_provincia
+FROM BASADOS.localidad
 /**********************************************************************
 DIMENSIÓN RANGO ETARIO CLIENTES
 **********************************************************************/
@@ -125,9 +125,24 @@ INSERT INTO BASADOS.BI_Dim_Estado_Pedido (ped_estado)
 SELECT 
     ped_estado
 FROM BASADOS.pedido;
+------------------------------------
+---- DIMENSION SUCURSAL ----
+------------------------------------
+CREATE TABLE BASADOS.BI_Dim_Sucursal (
+    suc_numero BIGINT PRIMARY KEY,
+    suc_localidad BIGINT --FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id)
+);
+
+INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero, suc_localidad)
+SELECT 
+    suc_numero, 
+    suc_localidad
+FROM BASADOS.sucursal;
+
 /**********************************************************************
 TABLA DE HECHOS VENTAs
 **********************************************************************/
+
 /**********************************************************************
 TABLA DE HECHOS COMPRAs
 **********************************************************************/
