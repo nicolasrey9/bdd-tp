@@ -1,7 +1,7 @@
 CREATE table BASADOS.BI_Hecho_Venta (
     venta_numero BIGINT,
     modelo_id BIGINT,
-    suc_numero BIGINT,
+    suc_id INT,
     tiempo_id INT,
     rango_id TINYINT,
     ubicacion_id BIGINT,
@@ -14,6 +14,10 @@ ADD CONSTRAINT PK_Hecho_Venta
 PRIMARY KEY (venta_numero, modelo_id);
 
 -----
+
+alter TABLE BASADOS.BI_Hecho_Venta
+add CONSTRAINT FK_Hecho_Venta_Sucursal FOREIGN KEY (suc_id) 
+REFERENCES BASADOS.BI_Dim_Sucursal(suc_id)
 
 alter TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT FK_Hecho_Venta_Modelo
