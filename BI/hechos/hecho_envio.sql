@@ -3,6 +3,7 @@ CREATE table BASADOS.BI_Hecho_Envio (
     tiempo_id INT,
     ubicacion_id BIGINT,
     costo_envio decimal(18,2),
+    fecha_programada DATE
 )
 
 ALTER TABLE BASADOS.BI_Hecho_Envio

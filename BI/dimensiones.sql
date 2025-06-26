@@ -122,17 +122,31 @@ FROM BASADOS.tipo_material;
 ---- DIMENSION MODELO DE SILLON ----
 ------------------------------------
 CREATE TABLE BASADOS.BI_Dim_Modelo (
-    modelo_id      BIGINT PRIMARY KEY,
-    modelo         NVARCHAR(255),
-    descripcion    NVARCHAR(255)
+    modelo_id           BIGINT IDENTITY(1,1) PRIMARY KEY,
+    modelo_codigo       BIGINT,
+    medida_ancho        decimal(18,2),
+    medida_alto         decimal(18,2),
+    medida_profundidad  decimal(18,2),
+    modelo              NVARCHAR(255),
+    descripcion         NVARCHAR(255)
 );
 
-INSERT INTO BASADOS.BI_Dim_Modelo (modelo_id, modelo, descripcion)
-SELECT 
+INSERT INTO BASADOS.BI_Dim_Modelo (modelo_codigo,
+    medida_ancho, medida_alto, medida_profundidad,
+    modelo, descripcion)
+SELECT
+    distinct
     mod_codigo,
+    med_ancho,
+    med_alto,
+    med_profundidad,
     mod_modelo,
     mod_descripcion
-FROM BASADOS.modelo;
+FROM BASADOS.sillon join BASADOS.modelo
+on sill_modelo=mod_codigo join BASADOS.medida on sill_medida_alto=med_alto and
+sill_medida_ancho=med_ancho and
+sill_medida_profundidad=med_profundidad
+
 ------------------------------------
 ---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
 ------------------------------------
