@@ -1,3 +1,4 @@
+
 USE GD1C2025;
 GO
 
@@ -578,7 +579,7 @@ INSERT BASADOS.cliente
 
 INSERT BASADOS.pedido
     (ped_numero, ped_fecha,ped_estado, ped_total, ped_sucursal, ped_cliente)
-    SELECT distinct Pedido_Numero, Pedido_Fecha
+    SELECT distinct Pedido_Numero, Pedido_Fecha,
         Pedido_Estado, Pedido_Total,
         Sucursal_NroSucursal,
         (select clie_id
