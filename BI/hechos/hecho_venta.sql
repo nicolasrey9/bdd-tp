@@ -1,6 +1,6 @@
 CREATE table BASADOS.BI_Hecho_Venta (
-    venta_numero BIGINT,
-    modelo_id BIGINT,
+    venta_numero BIGINT not null,
+    modelo_id BIGINT not null,
     suc_id INT,
     tiempo_id INT,
     rango_id TINYINT,

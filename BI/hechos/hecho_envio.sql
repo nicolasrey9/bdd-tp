@@ -1,5 +1,5 @@
 CREATE table BASADOS.BI_Hecho_Envio (
-    envio_numero decimal(18,0),
+    envio_numero decimal(18,0) not null,
     tiempo_id INT,
     ubicacion_id BIGINT,
     costo_envio decimal(18,2),

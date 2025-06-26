@@ -1,6 +1,6 @@
 CREATE table BASADOS.BI_Hecho_Compra (
-    compra_numero decimal(18,0),
-    tipo_id BIGINT,
+    compra_numero decimal(18,0) NOT NULL, 
+    tipo_id BIGINT NOT NULL,
     tiempo_id INT,
     suc_id INT,
     compra_valor decimal(18,2),
