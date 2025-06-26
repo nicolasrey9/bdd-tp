@@ -110,13 +110,17 @@ VALUES (1, '08:00-14:00', '08:00', '14:00'),
 ---- DIMENSION TIPO DE MATERIAL ----
 ------------------------------------
 CREATE TABLE BASADOS.BI_Dim_TipoMaterial (
-    tipo_id     BIGINT PRIMARY KEY,
-    tipo_nombre NVARCHAR(255)
+    tipo_id     BIGINT IDENTITY(1,1) PRIMARY KEY,
+    tipo_nombre NVARCHAR(255),
+    tipo_descripcion NVARCHAR(255),
 );
 
-INSERT INTO BASADOS.BI_Dim_TipoMaterial (tipo_id, tipo_nombre)
-SELECT tipo_id, tipo_nombre
-FROM BASADOS.tipo_material;
+INSERT INTO BASADOS.BI_Dim_TipoMaterial (
+    tipo_nombre, tipo_descripcion
+)
+SELECT distinct tipo_nombre, mat_descripcion
+FROM BASADOS.tipo_material join BASADOS.material
+on mat_tipo=tipo_id
 
 ------------------------------------
 ---- DIMENSION MODELO DE SILLON ----

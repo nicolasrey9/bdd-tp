@@ -64,12 +64,23 @@ and sill_medida_alto=med_alto
 and sill_medida_profundidad=med_profundidad
 
 
-
 /*
 @@@@@ HECHO COMPRA @@@@@
 */
-
-
+insert into BASADOS.BI_Hecho_Compra(
+    compra_numero, tipo_id, tiempo_id, suc_id, compra_valor
+)
+select comp_numero, BItipoMaterial.tipo_id, 
+    tiempo.tiempo_id, sucu.suc_id, det_precio_unitario*det_cantidad
+from BASADOS.compra join BASADOS.detalle_compra on det_compra=comp_numero
+join BASADOS.material on mat_id=det_material join BASADOS.tipo_material tipoMaterial
+on tipo_id=mat_tipo join BASADOS.BI_Dim_TipoMaterial BItipoMaterial 
+on tipoMaterial.tipo_nombre=BItipoMaterial.tipo_nombre
+and BItipoMaterial.tipo_descripcion=mat_descripcion
+join BASADOS.BI_Dim_Tiempo tiempo on
+CAST(comp_fecha AS DATE) = tiempo.fecha
+join BASADOS.BI_Dim_Sucursal sucu on
+sucu.suc_numero = comp_sucursal
 
 
 
