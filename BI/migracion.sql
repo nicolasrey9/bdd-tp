@@ -83,7 +83,25 @@ join BASADOS.BI_Dim_Sucursal sucu on
 sucu.suc_numero = comp_sucursal
 
 
-
 /*
 @@@@@ HECHO ENVIO @@@@@
 */
+insert into BASADOS.BI_Hecho_Envio(
+    envio_numero,
+    tiempo_id,
+    ubicacion_id,
+    costo_envio,
+    fecha_programada
+)
+select env_numero, tiempo.tiempo_id, BI_Ubicacion.ubicacion_id,
+    env_importe_subida+env_importe_traslado, CAST(env_fecha_programada as date)
+from BASADOS.envio
+join BASADOS.BI_Dim_Tiempo tiempo on
+CAST(env_fecha AS DATE) = tiempo.fecha
+join BASADOS.factura on fact_numero=env_factura
+join BASADOS.sucursal sucursal on sucursal.suc_numero=fact_sucursal
+join BASADOS.localidad localidad on localidad.local_id=sucursal.suc_localidad
+join BASADOS.provincia provincia on provincia.prov_id=localidad.local_provincia
+join BASADOS.BI_Dim_Ubicacion BI_Ubicacion 
+on BI_Ubicacion.local_nombre=localidad.local_nombre
+and BI_Ubicacion.prov_nombre=provincia.prov_nombre 
