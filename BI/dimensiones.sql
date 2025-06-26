@@ -124,16 +124,14 @@ FROM BASADOS.tipo_material;
 CREATE TABLE BASADOS.BI_Dim_Modelo (
     modelo_id      BIGINT PRIMARY KEY,
     modelo         NVARCHAR(255),
-    descripcion    NVARCHAR(255),
-    precio_base    DECIMAL(18,2)
+    descripcion    NVARCHAR(255)
 );
 
-INSERT INTO BASADOS.BI_Dim_Modelo (modelo_id, modelo, descripcion, precio_base)
+INSERT INTO BASADOS.BI_Dim_Modelo (modelo_id, modelo, descripcion)
 SELECT 
     mod_codigo,
     mod_modelo,
-    mod_descripcion,
-    mod_precio_base
+    mod_descripcion
 FROM BASADOS.modelo;
 ------------------------------------
 ---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
