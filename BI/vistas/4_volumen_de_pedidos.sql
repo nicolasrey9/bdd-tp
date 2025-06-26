@@ -6,7 +6,7 @@ count(distinct pedido_numero) PedidosRegistrados,
 
 tur.descripcion Turno, 
 
-suc_numero Sucursal, --se me ocurria mostrar el nombre pero no tiene xd
+suc_numero Sucursal,
 
 concat(t.anio,t.mes) MesDelAnio 
 
