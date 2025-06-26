@@ -143,20 +143,18 @@ CREATE TABLE BASADOS.BI_Dim_Estado_Pedido (
 );
 
 INSERT INTO BASADOS.BI_Dim_Estado_Pedido (ped_estado)
-SELECT 
+SELECT distinct
     ped_estado
 FROM BASADOS.pedido;
 ------------------------------------
 ---- DIMENSION SUCURSAL ----
 ------------------------------------
--- CREATE TABLE BASADOS.BI_Dim_Sucursal (
---     suc_numero BIGINT PRIMARY KEY,
---     suc_localidad BIGINT --FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id)
--- );
+CREATE TABLE BASADOS.BI_Dim_Sucursal (
+    suc_id INT IDENTITY(1,1) PRIMARY KEY
+    suc_numero BIGINT,
+);
 
--- INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero, suc_localidad)
--- SELECT 
---     suc_numero, 
---     suc_localidad
--- FROM BASADOS.sucursal; sacarla
-/* Primera posible vista de las ganancias */
+INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero)
+SELECT 
+    suc_numero
+FROM BASADOS.sucursal;
