@@ -24,10 +24,10 @@ on estado.ped_estado = p.ped_estado
 @@@@@ HECHO VENTA @@@@@
 */
 insert into BASADOS.BI_Hecho_Venta(
-    venta_numero, modelo_id, suc_id, tiempo_id,
+    venta_numero, sillon_codigo,modelo_id, suc_id, tiempo_id,
     rango_id, ubicacion_id, venta_valor
 )
-select fact_numero, mod.modelo_id, sucu.suc_id, 
+select fact_numero, sill_codigo, mod.modelo_id, sucu.suc_id, 
     tiempo.tiempo_id, rango.rango_id, ubi.ubicacion_id, 
     detfact.det_precio_unitario * detfact.det_cantidad
 from BASADOS.factura join BASADOS.detalle_factura detfact
@@ -59,15 +59,15 @@ join BASADOS.BI_Dim_Modelo mod on mod.modelo_codigo=sill_modelo
 and sill_medida_ancho=medida_ancho
 and sill_medida_alto=medida_alto
 and sill_medida_profundidad=medida_profundidad
+join BASADOS.medida on sill_medida_ancho=med_ancho
+and sill_medida_alto=med_alto
+and sill_medida_profundidad=med_profundidad
 
 
 
 /*
 @@@@@ HECHO COMPRA @@@@@
 */
-insert into BASADOS.BI_Hecho_Compra(
-    
-)
 
 
 

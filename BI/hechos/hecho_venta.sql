@@ -1,5 +1,6 @@
 CREATE table BASADOS.BI_Hecho_Venta (
     venta_numero BIGINT not null,
+    sillon_codigo BIGINT not null,
     modelo_id BIGINT not null,
     suc_id INT,
     tiempo_id INT,
@@ -11,7 +12,7 @@ CREATE table BASADOS.BI_Hecho_Venta (
 
 ALTER TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT PK_Hecho_Venta
-PRIMARY KEY (venta_numero, modelo_id);
+PRIMARY KEY (venta_numero, modelo_id, sillon_codigo);
 
 -----
 
