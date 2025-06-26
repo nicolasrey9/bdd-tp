@@ -136,7 +136,7 @@ FROM BASADOS.modelo;
 ------------------------------------
 ---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
 ------------------------------------
-CREATE TABLE BASADOS.BI_Dim_Estado_Pedido (
+CREATE TABLE BASADOS.BI_Dim_EstadoPedido (
    estado_id TINYINT IDENTITY(1,1) PRIMARY KEY,
    ped_estado NVARCHAR(255)
 );
