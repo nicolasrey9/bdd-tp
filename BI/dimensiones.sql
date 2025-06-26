@@ -45,27 +45,35 @@ OPTION (MAXRECURSION 0);
 ---- DIMENSION UBICACION-----
 -----------------------------
 CREATE TABLE BASADOS.BI_Dim_Ubicacion (
-    direccion_id NVARCHAR(255),
+    -- direccion_id NVARCHAR(255), sacar y reemplazar por
+    ubicacion_id BIGINT IDENTITY(1,1) PRIMARY KEY,
     local_nombre NVARCHAR(255),
     prov_nombre NVARCHAR(255)
 );
 
-ALTER TABLE BASADOS.BI_Dim_Ubicacion
-ADD CONSTRAINT PK_Dim_Ubicacion 
-PRIMARY KEY (direccion_id,local_nombre,prov_nombre);
+-- ALTER TABLE BASADOS.BI_Dim_Ubicacion
+-- ADD CONSTRAINT PK_Dim_Ubicacion 
+-- PRIMARY KEY (direccion_id,local_nombre,prov_nombre);
 
-INSERT INTO BASADOS.BI_Dim_Ubicacion (direccion_id,local_nombre, prov_nombre)
-    SELECT distinct clie_direccion, local_nombre, prov_nombre from BASADOS.cliente
-                                    join BASADOS.localidad on clie_localidad = local_id
-                                    join BASADOS.provincia on prov_id = local_provincia
-    UNION
-    SELECT distinct suc_direccion, local_nombre, prov_nombre from BASADOS.sucursal
-                                    join BASADOS.localidad on suc_localidad = local_id
-                                    join BASADOS.provincia on prov_id = local_provincia
-    UNION
-    SELECT distinct prov_direccion, local_nombre, prov_nombre from BASADOS.proveedor
-                                    join BASADOS.localidad on prov_localidad = local_id
-                                    join BASADOS.provincia on prov_id = local_provincia
+-- INSERT INTO BASADOS.BI_Dim_Ubicacion (direccion_id,local_nombre, prov_nombre)
+--     SELECT distinct clie_direccion, local_nombre, prov_nombre from BASADOS.cliente
+--                                     join BASADOS.localidad on clie_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+--     UNION
+--     SELECT distinct suc_direccion, local_nombre, prov_nombre from BASADOS.sucursal
+--                                     join BASADOS.localidad on suc_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+--     UNION
+--     SELECT distinct prov_direccion, local_nombre, prov_nombre from BASADOS.proveedor
+--                                     join BASADOS.localidad on prov_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+-- podriamos reemplazarlo por esto?
+INSERT INTO BASADOS.BI_Dim_Ubicacion (prov_nombre, local_nombre)
+SELECT DISTINCT 
+    prov.prov_nombre, 
+    loc.local_nombre
+FROM BASADOS.localidad loc
+JOIN BASADOS.provincia prov ON loc.local_provincia = prov.prov_id;
 
 /**********************************************************************
 DIMENSIÓN RANGO ETARIO CLIENTES
@@ -128,7 +136,7 @@ SELECT
     mod_precio_base
 FROM BASADOS.modelo;
 ------------------------------------
-!!---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
+---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
 ------------------------------------
 CREATE TABLE BASADOS.BI_Dim_Estado_Pedido (
    ped_estado NVARCHAR(255) PRIMARY KEY
@@ -141,40 +149,14 @@ FROM BASADOS.pedido;
 ------------------------------------
 ---- DIMENSION SUCURSAL ----
 ------------------------------------
-CREATE TABLE BASADOS.BI_Dim_Sucursal (
-    suc_numero BIGINT PRIMARY KEY,
-    suc_localidad BIGINT --FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id)
-);
+-- CREATE TABLE BASADOS.BI_Dim_Sucursal (
+--     suc_numero BIGINT PRIMARY KEY,
+--     suc_localidad BIGINT --FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id)
+-- );
 
-INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero, suc_localidad)
-SELECT 
-    suc_numero, 
-    suc_localidad
-FROM BASADOS.sucursal;
-
-/**********************************************************************
-TABLA DE HECHOS VENTAs
-**********************************************************************/
-CREATE TABLE BASADOS.BI_Hechos_Ventas (
-    venta_id INT IDENTITY(1,1) PRIMARY KEY,
-    tiempo_id INT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Tiempo(tiempo_id),
-    sucursal_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Sucursal(suc_numero),
-    localidad_cliente_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Localidad(local_id),
-    rango_id TINYINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_RangoEtario(rango_id),
-    turno_id TINYINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Turno(turno_id),
-    modelo_id BIGINT FOREIGN KEY REFERENCES BASADOS.BI_Dim_Modelo(modelo_id),
-    cantidad INT NOT NULL,
-    monto_total DECIMAL(18,2) NOT NULL,
-    costo_envio DECIMAL(18,2) NOT NULL
-);
-/**********************************************************************
-TABLA DE HECHOS COMPRAs
-**********************************************************************/
-/**********************************************************************
-TABLA DE HECHOS PEDIDOs
-**********************************************************************/
-/**********************************************************************
-TABLA DE HECHOS ENVIOs
-**********************************************************************/
-
+-- INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero, suc_localidad)
+-- SELECT 
+--     suc_numero, 
+--     suc_localidad
+-- FROM BASADOS.sucursal; sacarla
 /* Primera posible vista de las ganancias */
