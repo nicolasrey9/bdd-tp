@@ -139,7 +139,8 @@ FROM BASADOS.modelo;
 ---- DIMENSION ESTADO DE PEDIDO (A CHEQUEAR!!!)----!!
 ------------------------------------
 CREATE TABLE BASADOS.BI_Dim_Estado_Pedido (
-   ped_estado NVARCHAR(255) PRIMARY KEY
+   estado_id TINYINT IDENTITY(1,1) PRIMARY KEY,
+   ped_estado NVARCHAR(255)
 );
 
 INSERT INTO BASADOS.BI_Dim_Estado_Pedido (ped_estado)
@@ -150,8 +151,8 @@ FROM BASADOS.pedido;
 ---- DIMENSION SUCURSAL ----
 ------------------------------------
 CREATE TABLE BASADOS.BI_Dim_Sucursal (
-    suc_id INT IDENTITY(1,1) PRIMARY KEY
-    suc_numero BIGINT,
+    suc_id INT IDENTITY(1,1) PRIMARY KEY,
+    suc_numero BIGINT
 );
 
 INSERT INTO BASADOS.BI_Dim_Sucursal (suc_numero)
