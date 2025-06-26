@@ -90,7 +90,7 @@ INSERT BASADOS.BI_Dim_RangoEtario (rango_id, descripcion, edad_min, edad_max)
 VALUES (1, '<25',     0,   24),
        (2, '25-35',   25,  35),
        (3, '35-50',   36,  50),
-       (4, '>50',     51,  NULL);
+       (4, '>50',     51,  200);
 
 /**********************************************************************
 DIMENSIÓN TURNO DE VENTA
@@ -141,7 +141,7 @@ CREATE TABLE BASADOS.BI_Dim_EstadoPedido (
    ped_estado NVARCHAR(255)
 );
 
-INSERT INTO BASADOS.BI_Dim_Estado_Pedido (ped_estado)
+INSERT INTO BASADOS.BI_Dim_EstadoPedido (ped_estado)
 SELECT distinct
     ped_estado
 FROM BASADOS.pedido;
