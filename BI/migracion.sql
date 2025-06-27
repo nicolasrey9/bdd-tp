@@ -66,7 +66,6 @@ and sill_medida_profundidad=medida_profundidad
 join BASADOS.medida on sill_medida_ancho=med_ancho
 and sill_medida_alto=med_alto
 and sill_medida_profundidad=med_profundidad
-where detpedido.det_pedido not in (select pedido_numero from BASADOS.BI_Hecho_Pedido)
 
 /*
 @@@@@ HECHO COMPRA @@@@@
