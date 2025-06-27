@@ -1,12 +1,30 @@
 -- 8. Compras por Tipo de Material. Importe total gastado por tipo de material,
 -- sucursal y cuatrimestre.
-create view BASADOS.BI_Compras_Por_Tipo_Material AS
-select tipo_nombre, sum(compra_valor), suc_numero, cuatrimestre
-from BASADOS.BI_Hecho_Compra c
-join BASADOS.BI_Dim_TipoMaterial tm  on c.tipo_id = tm.tipo_id
-join BASADOS.BI_Dim_Sucursal s on c.suc_id = s.suc_id
-join BASADOS.BI_Dim_Tiempo t on c.tiempo_id = t.tiempo_id
-group by c.tipo_id, tm.tipo_nombre, s.suc_id, t.cuatrimestre
+CREATE VIEW BASADOS.BI_Compras_Por_Tipo_Material AS
+SELECT 
+    t.anio AS Anio,
+    t.cuatrimestre AS Cuatrimestre,
+    tm.tipo_nombre AS Material,
+    suc.suc_numero Sucursal,
+    sum(c.compra_valor) AS ImporteGastado
+FROM 
+    BASADOS.BI_Hecho_Compra c
+    JOIN BASADOS.BI_Dim_TipoMaterial tm ON c.tipo_id = tm.tipo_id
+    JOIN BASADOS.BI_Dim_Tiempo t ON c.tiempo_id = t.tiempo_id
+    join BASADOS.BI_Dim_Sucursal suc on c.suc_id = suc.suc_id
+GROUP BY 
+    t.anio, 
+    t.cuatrimestre, 
+    tm.tipo_nombre,
+    suc.suc_numero
+GO
 
--- select * from BASADOS.BI_Compras_Por_Tipo_Material
--- drop view BASADOS.BI_Compras_Por_Tipo_Material
+/* PARA CHEQUEAR SIRVE, REVISAR!!
+select comp_sucursal, sum(det_cantidad*det_precio_unitario), mat_descripcion from BASADOS.compra
+join BASADOS.detalle_compra on det_compra = comp_numero
+join BASADOS.material on det_material = mat_id
+
+group by comp_sucursal, mat_descripcion
+
+por ejemplo: La sucursal 37 compró 63 palos en madera y si vas sumando los importes por cuatri da eso
+*/

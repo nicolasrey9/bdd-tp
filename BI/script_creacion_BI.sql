@@ -1,5 +1,6 @@
 USE GD1C2025;
 GO
+-------------------------------------------------------------------------------------------------DIMENSIONES:
 
 --------------------------
 ---- DIMENSION TIEMPO ----
@@ -48,12 +49,29 @@ OPTION (MAXRECURSION 0);
 ---- DIMENSION UBICACION-----
 -----------------------------
 CREATE TABLE BASADOS.BI_Dim_Ubicacion (
+    -- direccion_id NVARCHAR(255), sacar y reemplazar por
     ubicacion_id BIGINT IDENTITY(1,1) PRIMARY KEY,
     local_nombre NVARCHAR(255),
     prov_nombre NVARCHAR(255)
 );
 
+-- ALTER TABLE BASADOS.BI_Dim_Ubicacion
+-- ADD CONSTRAINT PK_Dim_Ubicacion 
+-- PRIMARY KEY (direccion_id,local_nombre,prov_nombre);
 
+-- INSERT INTO BASADOS.BI_Dim_Ubicacion (direccion_id,local_nombre, prov_nombre)
+--     SELECT distinct clie_direccion, local_nombre, prov_nombre from BASADOS.cliente
+--                                     join BASADOS.localidad on clie_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+--     UNION
+--     SELECT distinct suc_direccion, local_nombre, prov_nombre from BASADOS.sucursal
+--                                     join BASADOS.localidad on suc_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+--     UNION
+--     SELECT distinct prov_direccion, local_nombre, prov_nombre from BASADOS.proveedor
+--                                     join BASADOS.localidad on prov_localidad = local_id
+--                                     join BASADOS.provincia on prov_id = local_provincia
+-- podriamos reemplazarlo por esto?
 INSERT INTO BASADOS.BI_Dim_Ubicacion (prov_nombre, local_nombre)
 SELECT DISTINCT 
     prov.prov_nombre, 
@@ -162,8 +180,7 @@ SELECT
     suc_numero
 FROM BASADOS.sucursal;
 
-
-
+-------------------------------------------------------------------------------------------TABLAS HECHOS:
 CREATE table BASADOS.BI_Hecho_Compra (
     compra_numero decimal(18,0) NOT NULL, 
     tipo_id BIGINT NOT NULL,
@@ -193,7 +210,6 @@ ADD CONSTRAINT FK_Hecho_Compra_Tiempo
 FOREIGN KEY (tiempo_id)
 REFERENCES BASADOS.BI_Dim_Tiempo(tiempo_id)
 
-
 CREATE table BASADOS.BI_Hecho_Envio (
     envio_numero decimal(18,0) not null,
     tiempo_id INT,
@@ -218,7 +234,6 @@ ADD CONSTRAINT FK_Hecho_Envio_Ubicacion
 FOREIGN KEY (ubicacion_id)
 REFERENCES BASADOS.BI_Dim_Ubicacion(ubicacion_id)
 
-
 CREATE TABLE BASADOS.BI_Hecho_Pedido (
     pedido_numero DECIMAL(18,0) PRIMARY KEY,
     turno_id TINYINT,
@@ -231,11 +246,6 @@ CREATE TABLE BASADOS.BI_Hecho_Pedido (
     CONSTRAINT FK_Tiempo FOREIGN KEY (tiempo_id) REFERENCES BASADOS.BI_Dim_Tiempo(tiempo_id),
     CONSTRAINT FK_Estado FOREIGN KEY (estado_id) REFERENCES BASADOS.BI_Dim_EstadoPedido(estado_id)
 );
-CREATE INDEX IX_HechoPedido_Tiempo ON BASADOS.BI_Hecho_Pedido(tiempo_id);
-CREATE INDEX IX_HechoPedido_Sucursal ON BASADOS.BI_Hecho_Pedido(suc_id);
-CREATE INDEX IX_HechoPedido_Turno ON BASADOS.BI_Hecho_Pedido(turno_id);
-CREATE INDEX IX_HechoPedido_Estado ON BASADOS.BI_Hecho_Pedido(estado_id);
-
 
 CREATE table BASADOS.BI_Hecho_Venta (
     venta_numero BIGINT not null,
@@ -246,6 +256,7 @@ CREATE table BASADOS.BI_Hecho_Venta (
     rango_id TINYINT,
     ubicacion_id BIGINT,
     venta_valor decimal(18,2),
+    pedido_numero DECIMAL(18,0)
 )
 
 
@@ -279,10 +290,52 @@ ADD CONSTRAINT FK_Hecho_Venta_Ubicacion
 FOREIGN KEY (ubicacion_id)
 REFERENCES BASADOS.BI_Dim_Ubicacion(ubicacion_id)
 
--------------------------
--- MIGRACION DE HECHOS --
--------------------------
+alter TABLE BASADOS.BI_Hecho_Venta
+ADD CONSTRAINT FK_Hecho_Venta_Pedido
+FOREIGN KEY (pedido_numero)
+REFERENCES BASADOS.BI_Hecho_Pedido(pedido_numero)
 
+--------------------------------------------------------------------------------------MIGRACION
+/*
+@@@@@ HECHO COMPRA @@@@@
+*/
+insert into BASADOS.BI_Hecho_Compra(
+    compra_numero, tipo_id, tiempo_id, suc_id, compra_valor
+)
+select comp_numero, BItipoMaterial.tipo_id, 
+    tiempo.tiempo_id, sucu.suc_id, det_precio_unitario*det_cantidad
+from BASADOS.compra join BASADOS.detalle_compra on det_compra=comp_numero
+join BASADOS.material on mat_id=det_material join BASADOS.tipo_material tipoMaterial
+on tipo_id=mat_tipo join BASADOS.BI_Dim_TipoMaterial BItipoMaterial 
+on tipoMaterial.tipo_nombre=BItipoMaterial.tipo_nombre
+and BItipoMaterial.tipo_descripcion=mat_descripcion
+join BASADOS.BI_Dim_Tiempo tiempo on
+CAST(comp_fecha AS DATE) = tiempo.fecha
+join BASADOS.BI_Dim_Sucursal sucu on
+sucu.suc_numero = comp_sucursal
+
+/*
+@@@@@ HECHO ENVIO @@@@@
+*/
+insert into BASADOS.BI_Hecho_Envio(
+    envio_numero,
+    tiempo_id,
+    ubicacion_id,
+    costo_envio,
+    fecha_programada
+)
+select env_numero, tiempo.tiempo_id, BI_Ubicacion.ubicacion_id,
+    env_importe_subida+env_importe_traslado, CAST(env_fecha_programada as date)
+from BASADOS.envio
+join BASADOS.BI_Dim_Tiempo tiempo on
+CAST(env_fecha AS DATE) = tiempo.fecha
+join BASADOS.factura on fact_numero=env_factura
+join BASADOS.sucursal sucursal on sucursal.suc_numero=fact_sucursal
+join BASADOS.localidad localidad on localidad.local_id=sucursal.suc_localidad
+join BASADOS.provincia provincia on provincia.prov_id=localidad.local_provincia
+join BASADOS.BI_Dim_Ubicacion BI_Ubicacion 
+on BI_Ubicacion.local_nombre=localidad.local_nombre
+and BI_Ubicacion.prov_nombre=provincia.prov_nombre 
 /*
 @@@@@ HECHO PEDIDO @@@@@
 */
@@ -295,9 +348,12 @@ select
     sucursal.suc_id, 
     tiempo.tiempo_id, 
     estado.estado_id
-from BASADOS.pedido p join BASADOS.BI_Dim_Turno turno 
-on CAST(p.ped_fecha AS TIME) >= turno.hora_desde 
-    AND CAST(p.ped_fecha AS TIME) < turno.hora_hasta
+from BASADOS.pedido p left join BASADOS.BI_Dim_Turno turno 
+ON CAST(p.ped_fecha AS TIME) >= turno.hora_desde 
+AND (
+    CAST(p.ped_fecha AS TIME) < turno.hora_hasta
+    OR (turno.hora_hasta = '20:00' AND CAST(p.ped_fecha AS TIME) = '20:00')
+    )
 join BASADOS.BI_Dim_Sucursal sucursal on
 sucursal.suc_numero = p.ped_sucursal
 join BASADOS.BI_Dim_Tiempo tiempo on
@@ -305,16 +361,17 @@ CAST(p.ped_fecha AS DATE) = tiempo.fecha
 join BASADOS.BI_Dim_EstadoPedido estado
 on estado.ped_estado = p.ped_estado
 
+
 /*
 @@@@@ HECHO VENTA @@@@@
 */
 insert into BASADOS.BI_Hecho_Venta(
     venta_numero, sillon_codigo,modelo_id, suc_id, tiempo_id,
-    rango_id, ubicacion_id, venta_valor
+    rango_id, ubicacion_id, venta_valor, pedido_numero
 )
 select fact_numero, sill_codigo, mod.modelo_id, sucu.suc_id, 
     tiempo.tiempo_id, rango.rango_id, ubi.ubicacion_id, 
-    detfact.det_precio_unitario * detfact.det_cantidad
+    detfact.det_precio_unitario * detfact.det_cantidad, detpedido.det_pedido
 from BASADOS.factura join BASADOS.detalle_factura detfact
 on det_factura=fact_numero join BASADOS.detalle_pedido detpedido
 on detfact.det_numero=detpedido.det_numero and 
@@ -347,46 +404,189 @@ and sill_medida_profundidad=medida_profundidad
 join BASADOS.medida on sill_medida_ancho=med_ancho
 and sill_medida_alto=med_alto
 and sill_medida_profundidad=med_profundidad
+GO
+--------------------------------------------------------------------------------------VISTAS:
+-- 1. Ganancias: Total de ingresos (facturación) - total de egresos (compras), por
+-- cada mes, por cada sucursal.
 
+CREATE VIEW BASADOS.BI_Tiempo_Promedio_Fabricacion AS
+select 
+anio, 
+mes, 
+suc_numero NumeroSucursal, 
 
-/*
-@@@@@ HECHO COMPRA @@@@@
-*/
-insert into BASADOS.BI_Hecho_Compra(
-    compra_numero, tipo_id, tiempo_id, suc_id, compra_valor
+(isnull(sum(venta_valor),0) - 
+    (select isnull(sum(compra_valor),0) 
+        from BASADOS.BI_Hecho_Compra c
+        join BASADOS.BI_Dim_Tiempo t2 on t2.tiempo_id = c.tiempo_id
+        where t2.anio = t.anio and t2.mes = t.mes and c.suc_id = v.suc_id)) Ganancias
+    
+    from BASADOS.BI_Hecho_Venta v
+    join BASADOS.BI_Dim_Tiempo t on t.tiempo_id = v.tiempo_id
+    join BASADOS.BI_Dim_Sucursal s on s.suc_id = v.suc_id
+    
+    group by anio, mes, suc_numero,v.suc_id
+GO
+/*2. Factura promedio mensual. Valor promedio de las facturas (en $) según la
+provincia de la sucursal para cada cuatrimestre de cada año. Se calcula en
+función de la sumatoria del importe de las facturas sobre el total de las mismas
+durante dicho período.*/
+CREATE VIEW BASADOS.BI_FACTURA_PROMEDIO_MENSUAL AS
+SELECT
+    temp.anio Anio,
+    temp.cuatrimestre Cuatrimestre,
+    ubi.prov_nombre Provincia,
+    sum(venta.venta_valor) 
+    /
+    count(venta.venta_numero) FacturaPromedio
+
+    FROM BASADOS.BI_Hecho_Venta venta
+    join BASADOS.BI_Dim_Ubicacion ubi on venta.ubicacion_id = ubi.ubicacion_id
+    join BASADOS.BI_Dim_Tiempo temp on venta.tiempo_id = temp.tiempo_id
+
+    GROUP BY ubi.prov_nombre, temp.anio, temp.cuatrimestre
+GO
+--vista 3
+CREATE VIEW BASADOS.BI_TOP_3_MODELOS_MAS_RENDIDORES AS
+WITH VentasRankeadas AS (
+    SELECT
+        modelo.modelo_id,
+        modelo.descripcion,
+        tiempo.cuatrimestre,
+        tiempo.anio,
+        ubicacion.local_nombre,
+        rango.descripcion AS rango_etario,
+        COUNT(*) AS cantidad_ventas,
+        ROW_NUMBER() OVER (
+            PARTITION BY tiempo.cuatrimestre, tiempo.anio, ubicacion.local_nombre, rango.rango_id
+            ORDER BY COUNT(*) DESC
+        ) AS rn
+    FROM BASADOS.BI_Hecho_Venta AS venta
+    JOIN BASADOS.BI_Dim_Modelo modelo ON modelo.modelo_id = venta.modelo_id
+    JOIN BASADOS.BI_Dim_RangoEtario rango ON rango.rango_id = venta.rango_id
+    JOIN BASADOS.BI_Dim_Tiempo tiempo ON tiempo.tiempo_id = venta.tiempo_id
+    JOIN BASADOS.BI_Dim_Ubicacion ubicacion ON ubicacion.ubicacion_id = venta.ubicacion_id
+    GROUP BY 
+        modelo.modelo_id,
+        modelo.descripcion,
+        tiempo.cuatrimestre,
+        tiempo.anio,
+        ubicacion.local_nombre,
+        rango.rango_id,
+        rango.descripcion
 )
-select comp_numero, BItipoMaterial.tipo_id, 
-    tiempo.tiempo_id, sucu.suc_id, det_precio_unitario*det_cantidad
-from BASADOS.compra join BASADOS.detalle_compra on det_compra=comp_numero
-join BASADOS.material on mat_id=det_material join BASADOS.tipo_material tipoMaterial
-on tipo_id=mat_tipo join BASADOS.BI_Dim_TipoMaterial BItipoMaterial 
-on tipoMaterial.tipo_nombre=BItipoMaterial.tipo_nombre
-and BItipoMaterial.tipo_descripcion=mat_descripcion
-join BASADOS.BI_Dim_Tiempo tiempo on
-CAST(comp_fecha AS DATE) = tiempo.fecha
-join BASADOS.BI_Dim_Sucursal sucu on
-sucu.suc_numero = comp_sucursal
+SELECT 
+    modelo_id,
+    descripcion,
+    cuatrimestre,
+    anio,
+    local_nombre,
+    rango_etario
+FROM VentasRankeadas
+WHERE rn <= 3;
+GO
+--Vista 4
+CREATE VIEW BASADOS.BI_VOLUMEN_PEDIDOS AS
+SELECT 
+    t.anio Anio,
+    t.mes Mes,
+    s.suc_numero NumeroSucursal,
+    tu.descripcion Turno,
+    COUNT(*) as CantidadPedidos
+FROM 
+    BASADOS.BI_Hecho_Pedido p
+    JOIN BASADOS.BI_Dim_Tiempo t ON p.tiempo_id = t.tiempo_id
+    JOIN BASADOS.BI_Dim_Sucursal s ON p.suc_id = s.suc_id
+    JOIN BASADOS.BI_Dim_Turno tu ON p.turno_id = tu.turno_id
+GROUP BY 
+    t.anio, t.mes, s.suc_numero, tu.descripcion
+GO
+--Vista 5
+CREATE VIEW BASADOS.BI_CONVERSION_PEDIDOS AS
+SELECT 
+    t.anio Anio,
+    t.cuatrimestre Cuatrimestre,
+    s.suc_numero NumeroSucursal,
+    e.ped_estado EstadoPedido,
+    COUNT(*) Cantidad,
+    (COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY t.anio, t.cuatrimestre, s.suc_numero)) PorcentajeDelTotal
+FROM 
+    BASADOS.BI_Hecho_Pedido p
+    JOIN BASADOS.BI_Dim_Tiempo t ON p.tiempo_id = t.tiempo_id
+    JOIN BASADOS.BI_Dim_Sucursal s ON p.suc_id = s.suc_id
+    JOIN BASADOS.BI_Dim_EstadoPedido e ON p.estado_id = e.estado_id
+GROUP BY 
+    t.anio, t.cuatrimestre, s.suc_numero, e.ped_estado
+GO
+--vISTA 6
+CREATE VIEW BASADOS.BI_Tiempo_Promedio_Fabricacion AS
+SELECT
+    t_fact.cuatrimestre,
+    s.suc_numero,
+    AVG(DATEDIFF(DAY, t_ped.fecha, t_fact.fecha)) AS TiempoPromedioEnDias
+FROM BASADOS.BI_Hecho_Venta v
+       JOIN BASADOS.BI_Hecho_Pedido p 
+              ON v.pedido_numero = p.pedido_numero
+JOIN BASADOS.BI_Dim_Tiempo t_ped 
+              ON p.tiempo_id = t_ped.tiempo_id
+JOIN BASADOS.BI_Dim_Tiempo t_fact 
+              ON v.tiempo_id = t_fact.tiempo_id
+JOIN BASADOS.BI_Dim_Sucursal s 
+              ON v.suc_id = s.suc_id
+GROUP BY t_fact.cuatrimestre, s.suc_numero
+GO
+--7. Promedio de Compras: importe promedio de compras por mes.
+create view BASADOS.BI_Promedio_Compras_Por_Mes as
+select anio Anio, mes Mes, avg(compra_valor) PromedioCompras
+from BASADOS.BI_Hecho_Compra c
+join BASADOS.BI_Dim_Tiempo t on c.tiempo_id = t.tiempo_id
+group by anio, mes
+GO
+--vista 8
+CREATE VIEW BASADOS.BI_Compras_Por_Tipo_Material AS
+SELECT 
+    t.anio AS Anio,
+    t.cuatrimestre AS Cuatrimestre,
+    tm.tipo_nombre AS Material,
+    suc.suc_numero Sucursal,
+    sum(c.compra_valor) AS ImporteGastado
+FROM 
+    BASADOS.BI_Hecho_Compra c
+    JOIN BASADOS.BI_Dim_TipoMaterial tm ON c.tipo_id = tm.tipo_id
+    JOIN BASADOS.BI_Dim_Tiempo t ON c.tiempo_id = t.tiempo_id
+    join BASADOS.BI_Dim_Sucursal suc on c.suc_id = suc.suc_id
+GROUP BY 
+    t.anio, 
+    t.cuatrimestre, 
+    tm.tipo_nombre,
+    suc.suc_numero
+GO
+--9
+CREATE VIEW BASADOS.BI_Cumplimiento_Envios_Por_Mes AS
+select 
 
+t.anio Anio, 
 
-/*
-@@@@@ HECHO ENVIO @@@@@
-*/
-insert into BASADOS.BI_Hecho_Envio(
-    envio_numero,
-    tiempo_id,
-    ubicacion_id,
-    costo_envio,
-    fecha_programada
-)
-select env_numero, tiempo.tiempo_id, BI_Ubicacion.ubicacion_id,
-    env_importe_subida+env_importe_traslado, CAST(env_fecha_programada as date)
-from BASADOS.envio
-join BASADOS.BI_Dim_Tiempo tiempo on
-CAST(env_fecha AS DATE) = tiempo.fecha
-join BASADOS.factura on fact_numero=env_factura
-join BASADOS.sucursal sucursal on sucursal.suc_numero=fact_sucursal
-join BASADOS.localidad localidad on localidad.local_id=sucursal.suc_localidad
-join BASADOS.provincia provincia on provincia.prov_id=localidad.local_provincia
-join BASADOS.BI_Dim_Ubicacion BI_Ubicacion 
-on BI_Ubicacion.local_nombre=localidad.local_nombre
-and BI_Ubicacion.prov_nombre=provincia.prov_nombre 
+t.mes Mes,
+        
+(count(*) * 100 
+/             
+(select count(*) from BASADOS.BI_Hecho_envio e2 
+join BASADOS.BI_Dim_Tiempo t2 on t2.tiempo_id = e2.tiempo_id
+where t2.mes = t.mes and t2.anio = t.anio)) PorcentajeCumplimiento
+
+from BASADOS.BI_Hecho_Envio e
+join BASADOS.BI_Dim_Tiempo t on e.tiempo_id = t.tiempo_id
+
+where t.fecha = e.fecha_programada
+
+group by t.anio, t.mes
+GO
+--10
+CREATE VIEW BASADOS.BI_Top3_Localidades_Mayor_Costo_Envio AS
+SELECT TOP 3 local_nombre NombreLocalidad
+FROM BASADOS.BI_Hecho_Envio e
+JOIN BASADOS.BI_Dim_Ubicacion u ON e.ubicacion_id = u.ubicacion_id
+GROUP BY local_nombre
+ORDER BY AVG(costo_envio) DESC;
+GO 
