@@ -409,7 +409,7 @@ GO
 -- 1. Ganancias: Total de ingresos (facturación) - total de egresos (compras), por
 -- cada mes, por cada sucursal.
 
-CREATE VIEW BASADOS.BI_Tiempo_Promedio_Fabricacion AS
+CREATE VIEW BASADOS.BI_Ganancias AS
 select 
 anio, 
 mes, 
