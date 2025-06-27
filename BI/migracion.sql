@@ -10,15 +10,19 @@ select
     sucursal.suc_id, 
     tiempo.tiempo_id, 
     estado.estado_id
-from BASADOS.pedido p join BASADOS.BI_Dim_Turno turno 
-on CAST(p.ped_fecha AS TIME) >= turno.hora_desde 
-    AND CAST(p.ped_fecha AS TIME) < turno.hora_hasta
+from BASADOS.pedido p left join BASADOS.BI_Dim_Turno turno 
+ON CAST(p.ped_fecha AS TIME) >= turno.hora_desde 
+AND (
+    CAST(p.ped_fecha AS TIME) < turno.hora_hasta
+    OR (turno.hora_hasta = '20:00' AND CAST(p.ped_fecha AS TIME) = '20:00')
+    )
 join BASADOS.BI_Dim_Sucursal sucursal on
 sucursal.suc_numero = p.ped_sucursal
 join BASADOS.BI_Dim_Tiempo tiempo on
 CAST(p.ped_fecha AS DATE) = tiempo.fecha
 join BASADOS.BI_Dim_EstadoPedido estado
 on estado.ped_estado = p.ped_estado
+
 
 /*
 @@@@@ HECHO VENTA @@@@@
@@ -62,7 +66,7 @@ and sill_medida_profundidad=medida_profundidad
 join BASADOS.medida on sill_medida_ancho=med_ancho
 and sill_medida_alto=med_alto
 and sill_medida_profundidad=med_profundidad
-
+where detpedido.det_pedido not in (select pedido_numero from BASADOS.BI_Hecho_Pedido)
 
 /*
 @@@@@ HECHO COMPRA @@@@@
