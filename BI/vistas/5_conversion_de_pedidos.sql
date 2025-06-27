@@ -5,8 +5,8 @@ SELECT
     t.cuatrimestre Cuatrimestre,
     s.suc_numero NumeroSucursal,
     e.ped_estado EstadoPedido,
-    COUNT(*) as Cantidad,
-    (COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY t.anio, t.cuatrimestre, s.suc_numero)) as PorcentajeDelTotal
+    COUNT(*) Cantidad,
+    (COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY t.anio, t.cuatrimestre, s.suc_numero)) PorcentajeDelTotal
 FROM 
     BASADOS.BI_Hecho_Pedido p
     JOIN BASADOS.BI_Dim_Tiempo t ON p.tiempo_id = t.tiempo_id

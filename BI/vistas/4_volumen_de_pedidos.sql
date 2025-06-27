@@ -15,7 +15,5 @@ GROUP BY
     t.anio, t.mes, s.suc_numero, tu.descripcion
 GO
 
--- select * from BASADOS.BI_VOLUMEN_PEDIDOS
-
+-- select * from BASADOS.BI_VOLUMEN_PEDIDOS order by 1,2,3,4
 -- drop view BASADOS.BI_VOLUMEN_PEDIDOS
-go
