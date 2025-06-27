@@ -7,6 +7,7 @@ CREATE table BASADOS.BI_Hecho_Venta (
     rango_id TINYINT,
     ubicacion_id BIGINT,
     venta_valor decimal(18,2),
+    pedido_numero DECIMAL(18,0)
 )
 
 
@@ -39,3 +40,8 @@ alter TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT FK_Hecho_Venta_Ubicacion
 FOREIGN KEY (ubicacion_id)
 REFERENCES BASADOS.BI_Dim_Ubicacion(ubicacion_id)
+
+alter TABLE BASADOS.BI_Hecho_Venta
+ADD CONSTRAINT FK_Hecho_Venta_Pedido
+FOREIGN KEY (pedido_numero)
+REFERENCES BASADOS.BI_Hecho_Pedido(pedido_numero)

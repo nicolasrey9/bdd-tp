@@ -25,11 +25,11 @@ on estado.ped_estado = p.ped_estado
 */
 insert into BASADOS.BI_Hecho_Venta(
     venta_numero, sillon_codigo,modelo_id, suc_id, tiempo_id,
-    rango_id, ubicacion_id, venta_valor
+    rango_id, ubicacion_id, venta_valor, pedido_numero
 )
 select fact_numero, sill_codigo, mod.modelo_id, sucu.suc_id, 
     tiempo.tiempo_id, rango.rango_id, ubi.ubicacion_id, 
-    detfact.det_precio_unitario * detfact.det_cantidad
+    detfact.det_precio_unitario * detfact.det_cantidad, detpedido.det_pedido
 from BASADOS.factura join BASADOS.detalle_factura detfact
 on det_factura=fact_numero join BASADOS.detalle_pedido detpedido
 on detfact.det_numero=detpedido.det_numero and 
