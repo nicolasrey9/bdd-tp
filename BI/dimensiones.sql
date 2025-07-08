@@ -8,16 +8,28 @@ CREATE TABLE BASADOS.BI_Dim_Tiempo (
     mes            TINYINT NOT NULL
 );
 
-
 INSERT INTO BASADOS.BI_Dim_Tiempo (anio, cuatrimestre, mes)
-SELECT year(ped_fecha), (MONTH(ped_fecha)-1)/4+1, MONTH(ped_fecha) FROM BASADOS.pedido
-UNION
-SELECT year(fact_fecha), (MONTH(fact_fecha)-1)/4+1, MONTH(fact_fecha) FROM BASADOS.factura
-UNION
-SELECT year(comp_fecha), (MONTH(comp_fecha)-1)/4+1, MONTH(comp_fecha) FROM BASADOS.compra
-UNION
-SELECT year(env_fecha), (MONTH(env_fecha)-1)/4+1, MONTH(env_fecha) FROM BASADOS.envio
+SELECT YEAR(ped_fecha), (MONTH(ped_fecha) - 1) / 4 + 1 AS trimestre, MONTH(ped_fecha)
+FROM BASADOS.pedido
+WHERE ped_fecha IS NOT NULL
 
+UNION
+
+SELECT YEAR(fact_fecha), (MONTH(fact_fecha) - 1) / 4 + 1, MONTH(fact_fecha)
+FROM BASADOS.factura
+WHERE fact_fecha IS NOT NULL
+
+UNION
+
+SELECT YEAR(comp_fecha), (MONTH(comp_fecha) - 1) / 4 + 1, MONTH(comp_fecha)
+FROM BASADOS.compra
+WHERE comp_fecha IS NOT NULL
+
+UNION
+
+SELECT YEAR(env_fecha), (MONTH(env_fecha) - 1) / 4 + 1, MONTH(env_fecha)
+FROM BASADOS.envio
+WHERE env_fecha IS NOT NULL;
 
 -----------------------------
 ---- DIMENSION UBICACION-----
