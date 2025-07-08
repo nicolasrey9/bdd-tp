@@ -1,30 +1,26 @@
 CREATE table BASADOS.BI_Hecho_Venta (
-    venta_numero BIGINT not null,
-    sillon_codigo BIGINT not null,
+    suc_id INT not null,
+    tiempo_id INT not null,
+    rango_id TINYINT not null,
+    ubicacion_id BIGINT not null,
     modelo_id BIGINT not null,
-    suc_id INT,
-    tiempo_id INT,
-    rango_id TINYINT,
-    ubicacion_id BIGINT,
-    venta_valor decimal(18,2),
-    pedido_numero DECIMAL(18,0)
+
+    tiempo_fabricacion datetime2(6),
+    valor_promedio_ventas DECIMAL(18,2),
+    valor_total_ventas DECIMAL(18,2),
 )
 
 
 ALTER TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT PK_Hecho_Venta
-PRIMARY KEY (venta_numero, modelo_id, sillon_codigo);
+PRIMARY KEY (suc_id, tiempo_id, rango_id, 
+    ubicacion_id, modelo_id);
 
 -----
 
 alter TABLE BASADOS.BI_Hecho_Venta
 add CONSTRAINT FK_Hecho_Venta_Sucursal FOREIGN KEY (suc_id) 
 REFERENCES BASADOS.BI_Dim_Sucursal(suc_id)
-
-alter TABLE BASADOS.BI_Hecho_Venta
-ADD CONSTRAINT FK_Hecho_Venta_Modelo
-FOREIGN KEY (modelo_id)
-REFERENCES BASADOS.BI_Dim_Modelo(modelo_id)
 
 alter TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT FK_Hecho_Venta_Tiempo
@@ -39,9 +35,9 @@ REFERENCES BASADOS.BI_Dim_RangoEtario(rango_id)
 alter TABLE BASADOS.BI_Hecho_Venta
 ADD CONSTRAINT FK_Hecho_Venta_Ubicacion
 FOREIGN KEY (ubicacion_id)
-REFERENCES BASADOS.BI_Dim_Ubicacion(ubicacion_id)
+REFERENCES BASADOS.BI_Dim_Ubicacion_Cliente(ubicacion_id)
 
 alter TABLE BASADOS.BI_Hecho_Venta
-ADD CONSTRAINT FK_Hecho_Venta_Pedido
-FOREIGN KEY (pedido_numero)
-REFERENCES BASADOS.BI_Hecho_Pedido(pedido_numero)
+ADD CONSTRAINT FK_Hecho_Venta_Modelo
+FOREIGN KEY (modelo_id)
+REFERENCES BASADOS.BI_Dim_Modelo(modelo_id)
