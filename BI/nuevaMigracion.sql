@@ -1,5 +1,5 @@
 /*
-@@@@@ HECHO PEDIDO @@@@@ --chequear
+@@@@@ HECHO PEDIDO @@@@@
 */
 insert into BASADOS.BI_Hecho_Pedido(
     turno_id, 
@@ -12,7 +12,7 @@ select
     sucursal.suc_id, 
     tiempo.tiempo_id, 
     estado.estado_id,
-    (select count(distinct ped_numero))
+    (select count(distinct ped_numero)) 'Cantidad Pedidos'
 
 from BASADOS.pedido p 
 
@@ -23,7 +23,11 @@ AND (
     OR (turno.hora_hasta = '20:00' AND CAST(p.ped_fecha AS TIME) = '20:00')
     )
 
-join BASADOS.BI_Dim_Sucursal sucursal on sucursal.suc_id = p.ped_sucursal
+join BASADOS.sucursal sucursalBasados on p.ped_sucursal=sucursalBasados.suc_numero
+join BASADOS.localidad localidadBasados on sucursalBasados.suc_localidad=localidadBasados.local_id
+join BASADOS.provincia provinciaBasados on provinciaBasados.prov_id=localidadBasados.local_provincia
+join BASADOS.BI_Dim_Sucursal sucursal on sucursal.localidad = localidadBasados.local_nombre
+and sucursal.provincia = provinciaBasados.prov_nombre
 
 join BASADOS.BI_Dim_Tiempo tiempo on   
                         year(p.ped_fecha) = tiempo.anio and MONTH(p.ped_fecha) = tiempo.mes
@@ -35,8 +39,10 @@ group by turno.turno_id,
     sucursal.suc_id, 
     tiempo.tiempo_id, 
     estado.estado_id
+
+
 /*
-@@@@@ HECHO COMPRA @@@@@ --chequear
+@@@@@ HECHO COMPRA @@@@@
 */
 insert into BASADOS.BI_Hecho_Compra(
     tipo_id, tiempo_id, suc_id, 
@@ -44,7 +50,10 @@ insert into BASADOS.BI_Hecho_Compra(
     valor_total_compras, valor_promedio_compras
 )
 
-select BI_Dim_TipoMaterial.tipo_id, BI_Dim_Tiempo.tiempo_id, BI_Dim_Sucursal.suc_id, sum(comp_total), avg(comp_total)
+select BI_Dim_TipoMaterial.tipo_id, BI_Dim_Tiempo.tiempo_id, sucursal.suc_id, 
+    sum(det_precio_unitario * det_cantidad) valor_total_compras, 
+    avg(det_precio_unitario * det_cantidad) valor_promedio_compras
+
 from BASADOS.compra 
 
 join BASADOS.detalle_compra on det_compra=comp_numero
@@ -61,13 +70,18 @@ and BI_Dim_TipoMaterial.tipo_descripcion=mat_descripcion
 join BASADOS.BI_Dim_Tiempo BI_Dim_Tiempo on
         year(comp_fecha) = BI_Dim_Tiempo.anio and MONTH(comp_fecha) = BI_Dim_Tiempo.mes
 
-join BASADOS.BI_Dim_Sucursal BI_Dim_Sucursal on
-BI_Dim_Sucursal.suc_id = comp_sucursal
 
-group by BI_Dim_TipoMaterial.tipo_id, BI_Dim_Tiempo.tiempo_id, BI_Dim_Sucursal.suc_id
+join BASADOS.sucursal sucursalBasados on comp_sucursal=sucursalBasados.suc_numero
+join BASADOS.localidad localidadBasados on sucursalBasados.suc_localidad=localidadBasados.local_id
+join BASADOS.provincia provinciaBasados on provinciaBasados.prov_id=localidadBasados.local_provincia
+join BASADOS.BI_Dim_Sucursal sucursal on sucursal.localidad = localidadBasados.local_nombre
+and sucursal.provincia = provinciaBasados.prov_nombre
+
+
+group by BI_Dim_TipoMaterial.tipo_id, BI_Dim_Tiempo.tiempo_id, sucursal.suc_id
 
 /*
-@@@@@ HECHO ENVIO @@@@@ --chequear
+@@@@@ HECHO ENVIO @@@@@
 */
 insert into BASADOS.BI_Hecho_Envio(
     tiempo_id,
@@ -78,8 +92,10 @@ insert into BASADOS.BI_Hecho_Envio(
 )
 select BI_Dim_Tiempo.tiempo_id, BI_Dim_Ubicacion_Cliente.ubicacion_id,
 
---(porcentajeCumplimiento),
-avg(env_importe_subida+env_importe_traslado)
+SUM(CASE WHEN env_fecha <= env_fecha_programada THEN 1 ELSE 0 END)
+    * 100.0 / COUNT(*) AS porcentaje_cumplimiento_envios,
+
+avg(env_importe_subida+env_importe_traslado) valor_promedio_envios
     
 from BASADOS.envio
 join BASADOS.BI_Dim_Tiempo BI_Dim_Tiempo on
@@ -93,6 +109,7 @@ join BASADOS.BI_Dim_Ubicacion_Cliente BI_Dim_Ubicacion_Cliente
             on localidad.local_nombre = BI_Dim_Ubicacion_Cliente.local_nombre and provincia.prov_nombre = BI_Dim_Ubicacion_Cliente.prov_nombre
 
 group by BI_Dim_Tiempo.tiempo_id, BI_Dim_Ubicacion_Cliente.ubicacion_id
+
 /*
 @@@@@ HECHO VENTA @@@@@ --chequear
 */
