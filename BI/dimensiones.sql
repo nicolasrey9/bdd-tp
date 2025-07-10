@@ -32,7 +32,7 @@ FROM BASADOS.envio
 WHERE env_fecha IS NOT NULL;
 
 -----------------------------
----- DIMENSION UBICACION-----
+---- DIMENSION UBICACION CLIENTE-----
 -----------------------------
 CREATE TABLE BASADOS.BI_Dim_Ubicacion_Cliente (
     ubicacion_id BIGINT IDENTITY(1,1) PRIMARY KEY,

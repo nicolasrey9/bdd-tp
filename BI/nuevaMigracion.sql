@@ -114,32 +114,38 @@ group by BI_Dim_Tiempo.tiempo_id, BI_Dim_Ubicacion_Cliente.ubicacion_id
 @@@@@ HECHO VENTA @@@@@ --chequear
 */
 insert into BASADOS.BI_Hecho_Venta(
-    suc_id, tiempo_id,
-    rango_id, ubicacion_id,modelo_id,
+    suc_id, 
+    tiempo_id,
+    rango_id, 
+    ubicacion_id,
+    modelo_id,
 
-    tiempo_fabricacion, valor_promedio_ventas, valor_total_ventas
+    tiempo_promedio_fabricacion_en_dias, 
+    valor_promedio_ventas, 
+    valor_total_ventas
 )
 select BI_Dim_Sucursal.suc_id, 
     BI_Dim_Tiempo.tiempo_id, 
     BI_Dim_RangoEtario.rango_id, 
     BI_Dim_Ubicacion_Cliente.ubicacion_id,
-    --(tiempo de fabricacion),
-    avg(detfact.det_precio_unitario*detfact.det_cantidad),
-    sum(detfact.det_precio_unitario*detfact.det_cantidad)
+    BI_Dim_Modelo.modelo_id,
+
+    avg(DATEDIFF(DAY,ped.ped_fecha,fact_fecha)) tiempo_fabricacion,--deberiamos chequear el tema de AVG, no estoy seguro
+    avg(detfact.det_precio_unitario*detfact.det_cantidad) valor_promedio_ventas,
+    sum(detfact.det_precio_unitario*detfact.det_cantidad) valor_total_ventas
     
 from BASADOS.factura 
 
 join BASADOS.detalle_factura detfact
-on det_factura=fact_numero 
+on detfact.det_factura=fact_numero 
 
 join BASADOS.detalle_pedido detpedido
 on detfact.det_numero=detpedido.det_numero and 
 detfact.det_pedido=detpedido.det_pedido
 
-join BASADOS.sillon on detpedido.det_sillon=sill_codigo
+join BASADOS.pedido ped on detpedido.det_pedido = ped.ped_numero
 
-join BASADOS.BI_Dim_Sucursal BI_Dim_Sucursal on
-BI_Dim_Sucursal.suc_id = fact_sucursal
+join BASADOS.sillon on detpedido.det_sillon=sill_codigo
 
 join BASADOS.BI_Dim_Tiempo BI_Dim_Tiempo on
         year(fact_fecha) = BI_Dim_Tiempo.anio and MONTH(fact_fecha) = BI_Dim_Tiempo.mes
@@ -156,22 +162,29 @@ join BASADOS.BI_Dim_RangoEtario BI_Dim_RangoEtario on
       ELSE 0 
     END
 ) between BI_Dim_RangoEtario.edad_min and BI_Dim_RangoEtario.edad_max
+
 join BASADOS.sucursal on fact_sucursal=sucursal.suc_numero
 
-join BASADOS.localidad on sucursal.suc_localidad=localidad.local_id
+join BASADOS.localidad loca on sucursal.suc_localidad=loca.local_id
 
-join BASADOS.provincia on provincia.prov_id=localidad.local_provincia
+join BASADOS.provincia prov on prov.prov_id=loca.local_provincia
 
-join BASADOS.BI_Dim_Ubicacion_Cliente BI_Dim_Ubicacion_Cliente on BI_Dim_Ubicacion_Cliente.prov_nombre=provincia.prov_nombre
-and BI_Dim_Ubicacion_Cliente.local_nombre = localidad.local_nombre
+join BASADOS.BI_Dim_Sucursal BI_Dim_Sucursal on
+BI_Dim_Sucursal.localidad = loca.local_nombre and BI_Dim_Sucursal.provincia = prov.prov_nombre
 
-join BASADOS.BI_Dim_Modelo mod on mod.modelo_id=sill_modelo
+join BASADOS.localidad loca1 on clie_localidad = loca1.local_id
 
-join BASADOS.medida on sill_medida_ancho=med_ancho
-and sill_medida_alto=med_alto
-and sill_medida_profundidad=med_profundidad
+join BASADOS.provincia prov1 on prov1.prov_id = loca1.local_provincia
+
+join BASADOS.BI_Dim_Ubicacion_Cliente BI_Dim_Ubicacion_Cliente on BI_Dim_Ubicacion_Cliente.prov_nombre=prov1.prov_nombre
+and BI_Dim_Ubicacion_Cliente.local_nombre = loca1.local_nombre
+
+join BASADOS.modelo on sill_modelo = mod_codigo
+
+join BASADOS.BI_Dim_Modelo BI_Dim_Modelo on BI_Dim_Modelo.modelo=mod_modelo
 
 group by BI_Dim_Sucursal.suc_id, 
     BI_Dim_Tiempo.tiempo_id, 
     BI_Dim_RangoEtario.rango_id, 
-    BI_Dim_Ubicacion_Cliente.ubicacion_id
+    BI_Dim_Ubicacion_Cliente.ubicacion_id,
+    BI_Dim_Modelo.modelo_id
