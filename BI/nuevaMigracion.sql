@@ -130,7 +130,7 @@ select BI_Dim_Sucursal.suc_id,
     BI_Dim_Ubicacion_Cliente.ubicacion_id,
     BI_Dim_Modelo.modelo_id,
 
-    avg(DATEDIFF(DAY,ped.ped_fecha,fact_fecha)) tiempo_fabricacion,--deberiamos chequear el tema de AVG, no estoy seguro
+    avg(DATEDIFF(DAY,ped.ped_fecha,fact_fecha)) tiempo_promedio_fabricacion_en_dias,--deberiamos chequear el tema de AVG, no estoy seguro
     avg(detfact.det_precio_unitario*detfact.det_cantidad) valor_promedio_ventas,
     sum(detfact.det_precio_unitario*detfact.det_cantidad) valor_total_ventas
     
