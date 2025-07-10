@@ -24,3 +24,12 @@ group by t.anio, t.mes
 -- SELECT * from BASADOS.BI_Cumplimiento_Envios_Por_Mes
 
 -- DROP VIEW BASADOS.BI_Cumplimiento_Envios_Por_Mes
+
+CREATE VIEW BASADOS.BI_Vista_Cumplimiento_Envios_Por_Mes AS
+SELECT 
+    t.anio,
+    t.mes,
+    AVG(e.porcentaje_cumplimiento_envios) AS porcentaje_cumplimiento_promedio
+FROM BASADOS.BI_Hecho_Envio e
+JOIN BASADOS.BI_Dim_Tiempo t ON e.tiempo_id = t.tiempo_id
+GROUP BY t.anio, t.mes;
