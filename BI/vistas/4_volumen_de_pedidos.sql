@@ -23,7 +23,7 @@ SELECT
     t.anio,
     t.mes,
     s.suc_id,
-    tu.turno_id,
+    --tu.turno_id,
     tu.descripcion AS turno,
     SUM(p.cantidad_pedidos) AS total_pedidos
 FROM BASADOS.BI_Hecho_Pedido p

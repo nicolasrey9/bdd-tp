@@ -5,9 +5,9 @@ CREATE table BASADOS.BI_Hecho_Venta (
     ubicacion_id BIGINT not null,
     modelo_id BIGINT not null,
 
-    tiempo_fabricacion datetime2(6),
+    tiempo_promedio_fabricacion_en_dias INT,
     valor_promedio_ventas DECIMAL(18,2),
-    valor_total_ventas DECIMAL(18,2),
+    valor_total_ventas DECIMAL(18,2)
 )
 
 

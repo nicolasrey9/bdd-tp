@@ -20,3 +20,28 @@ GO
 
 --SELECT * from BASADOS.BI_FACTURA_PROMEDIO_MENSUAL
 go
+
+CREATE VIEW BASADOS.BI_Vista_Factura_Promedio_Mensual AS
+SELECT
+    t.anio,
+    t.cuatrimestre,
+    s.provincia,
+    SUM(v.valor_total_ventas) / COUNT(*) AS factura_promedio
+FROM BASADOS.BI_Hecho_Venta v
+JOIN BASADOS.BI_Dim_Tiempo t ON v.tiempo_id = t.tiempo_id
+JOIN BASADOS.BI_Dim_Sucursal s ON v.suc_id = s.suc_id
+GROUP BY s.provincia, t.anio, t.cuatrimestre;
+GO
+
+---esta iria
+SELECT
+    t.anio,
+    t.mes,
+    s.provincia,
+    avg(v.valor_promedio_ventas)
+FROM BASADOS.BI_Hecho_Venta v
+JOIN BASADOS.BI_Dim_Tiempo t ON v.tiempo_id = t.tiempo_id
+JOIN BASADOS.BI_Dim_Sucursal s ON v.suc_id = s.suc_id
+GROUP BY s.provincia, t.anio, t.mes
+
+go
