@@ -111,7 +111,7 @@ join BASADOS.BI_Dim_Ubicacion_Cliente BI_Dim_Ubicacion_Cliente
 group by BI_Dim_Tiempo.tiempo_id, BI_Dim_Ubicacion_Cliente.ubicacion_id
 
 /*
-@@@@@ HECHO VENTA @@@@@ --chequear
+@@@@@ HECHO VENTA @@@@@
 */
 insert into BASADOS.BI_Hecho_Venta(
     suc_id, 
@@ -130,7 +130,7 @@ select BI_Dim_Sucursal.suc_id,
     BI_Dim_Ubicacion_Cliente.ubicacion_id,
     BI_Dim_Modelo.modelo_id,
 
-    avg(DATEDIFF(DAY,ped.ped_fecha,fact_fecha)) tiempo_promedio_fabricacion_en_dias,--deberiamos chequear el tema de AVG, no estoy seguro
+    avg(DATEDIFF(DAY,ped.ped_fecha,fact_fecha)) tiempo_promedio_fabricacion_en_dias,
     avg(detfact.det_precio_unitario*detfact.det_cantidad) valor_promedio_ventas,
     sum(detfact.det_precio_unitario*detfact.det_cantidad) valor_total_ventas
     
@@ -182,9 +182,11 @@ and BI_Dim_Ubicacion_Cliente.local_nombre = loca1.local_nombre
 join BASADOS.modelo on sill_modelo = mod_codigo
 
 join BASADOS.BI_Dim_Modelo BI_Dim_Modelo on BI_Dim_Modelo.modelo=mod_modelo
+and mod_descripcion=BI_Dim_Modelo.descripcion
 
 group by BI_Dim_Sucursal.suc_id, 
     BI_Dim_Tiempo.tiempo_id, 
     BI_Dim_RangoEtario.rango_id, 
     BI_Dim_Ubicacion_Cliente.ubicacion_id,
     BI_Dim_Modelo.modelo_id
+
