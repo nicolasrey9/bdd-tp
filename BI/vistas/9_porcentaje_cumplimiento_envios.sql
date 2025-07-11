@@ -1,6 +1,3 @@
--- 9. Porcentaje de cumplimiento de envíos en los tiempos programados por mes.
--- Se calcula teniendo en cuenta los envíos cumplidos en fecha sobre el total de
--- envíos para el período.
 CREATE VIEW BASADOS.BI_Vista_Cumplimiento_Envios_Por_Mes AS
 SELECT 
     t.anio,

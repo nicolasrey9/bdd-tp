@@ -1,4 +1,3 @@
---Vista 5
 CREATE VIEW BASADOS.BI_Vista_Conversion_Pedidos AS
 SELECT 
     t.anio,
@@ -16,3 +15,4 @@ FROM BASADOS.BI_Hecho_Pedido p
 JOIN BASADOS.BI_Dim_Tiempo t ON p.tiempo_id = t.tiempo_id
 JOIN BASADOS.BI_Dim_EstadoPedido e ON p.estado_id = e.estado_id
 GROUP BY t.anio, t.cuatrimestre, p.suc_id, e.ped_estado;
+GO

@@ -9,3 +9,4 @@ FROM BASADOS.BI_Hecho_Envio e
 JOIN BASADOS.BI_Dim_Ubicacion_Cliente u ON e.ubicacion_id = u.ubicacion_id
 GROUP BY u.local_nombre, u.prov_nombre
 ORDER BY AVG(e.valor_promedio_envios) DESC;
+go

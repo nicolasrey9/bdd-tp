@@ -1,6 +1,3 @@
--- 1. Ganancias: Total de ingresos (facturación) - total de egresos (compras), por
--- cada mes, por cada sucursal.
-
 CREATE VIEW BASADOS.BI_Vista_Ganancias AS
 SELECT 
     t.anio, 
@@ -16,3 +13,4 @@ FROM BASADOS.BI_Hecho_Venta v
 JOIN BASADOS.BI_Dim_Tiempo t ON t.tiempo_id = v.tiempo_id
 JOIN BASADOS.BI_Dim_Sucursal s ON s.suc_id = v.suc_id
 GROUP BY t.anio, t.mes, v.suc_id
+GO
